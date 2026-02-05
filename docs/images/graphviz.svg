@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="910pt" height="297pt" viewBox="0.00 0.00 910.00 297.00">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 293.2)">
+<title>DependencyDiagram</title>
+<polygon fill="white" stroke="none" points="-4,4 -4,-293.2 906,-293.2 906,4 -4,4"/>
+<g id="clust1" class="cluster">
+<title>cluster_framework</title>
+<polygon fill="lightgrey" stroke="lightgrey" points="8,-15.8 8,-202.8 273,-202.8 273,-15.8 8,-15.8"/>
+<text xml:space="preserve" text-anchor="middle" x="140.5" y="-186.2" font-family="Times,serif" font-size="14.00">Framework layer</text>
+</g>
+<g id="clust2" class="cluster">
+<title>cluster_data</title>
+<polygon fill="lightyellow" stroke="lightyellow" points="290,-8 290,-205.6 531,-205.6 531,-8 290,-8"/>
+<text xml:space="preserve" text-anchor="middle" x="410.5" y="-189" font-family="Times,serif" font-size="14.00">Data layer</text>
+</g>
+<g id="clust3" class="cluster">
+<title>cluster_frontend</title>
+<polygon fill="lightblue" stroke="lightblue" points="558,-15.8 558,-205.6 692,-205.6 692,-15.8 558,-15.8"/>
+<text xml:space="preserve" text-anchor="middle" x="625" y="-189" font-family="Times,serif" font-size="14.00">Presentation layer</text>
+</g>
+<g id="clust4" class="cluster">
+<title>cluster_config</title>
+<polygon fill="lightgreen" stroke="lightgreen" points="720,-123.2 720,-205.6 894,-205.6 894,-123.2 720,-123.2"/>
+<text xml:space="preserve" text-anchor="middle" x="807" y="-189" font-family="Times,serif" font-size="14.00">Configuration</text>
+</g>
+<!-- app -->
+<g id="node1" class="node">
+<title>app</title>
+<path fill="none" stroke="black" stroke-width="2" d="M522.14,-289.2C522.14,-289.2 425.86,-289.2 425.86,-289.2 419.86,-289.2 413.86,-283.2 413.86,-277.2 413.86,-277.2 413.86,-242.8 413.86,-242.8 413.86,-236.8 419.86,-230.8 425.86,-230.8 425.86,-230.8 522.14,-230.8 522.14,-230.8 528.14,-230.8 534.14,-236.8 534.14,-242.8 534.14,-242.8 534.14,-277.2 534.14,-277.2 534.14,-283.2 528.14,-289.2 522.14,-289.2"/>
+<text xml:space="preserve" text-anchor="middle" x="474" y="-272.6" font-family="Helvetica,sans-Serif" font-size="14.00">app.py</text>
+<text xml:space="preserve" text-anchor="middle" x="474" y="-255.8" font-family="Helvetica,sans-Serif" font-size="14.00">&lt;&lt;entry-point&gt;&gt;</text>
+<text xml:space="preserve" text-anchor="middle" x="474" y="-239" font-family="Helvetica,sans-Serif" font-size="14.00">Flask application</text>
+</g>
+<!-- flask -->
+<g id="node2" class="node">
+<title>flask</title>
+<polygon fill="none" stroke="black" points="234,-170 180,-170 180,-134 234,-134 234,-170"/>
+<text xml:space="preserve" text-anchor="middle" x="207" y="-147.8" font-family="Helvetica,sans-Serif" font-size="14.00">Flask</text>
+</g>
+<!-- app&#45;&gt;flask -->
+<g id="edge1" class="edge">
+<title>app-&gt;flask</title>
+<path fill="none" stroke="black" d="M413.46,-248.14C374.16,-239.7 322.54,-225.96 280,-205.6 264.35,-198.11 248.55,-187.22 235.66,-177.29"/>
+<polygon fill="black" stroke="black" points="238.03,-174.71 228.02,-171.23 233.68,-180.19 238.03,-174.71"/>
+</g>
+<!-- sqlite -->
+<g id="node5" class="node">
+<title>sqlite</title>
+<polygon fill="none" stroke="black" points="381.83,-172.8 298.17,-172.8 298.17,-131.2 381.83,-131.2 381.83,-172.8"/>
+<text xml:space="preserve" text-anchor="middle" x="340" y="-156.2" font-family="Helvetica,sans-Serif" font-size="14.00">sqlite3</text>
+<text xml:space="preserve" text-anchor="middle" x="340" y="-139.4" font-family="Helvetica,sans-Serif" font-size="14.00">(DB driver)</text>
+</g>
+<!-- app&#45;&gt;sqlite -->
+<g id="edge4" class="edge">
+<title>app-&gt;sqlite</title>
+<path fill="none" stroke="black" d="M436.02,-230.43C425.59,-222.47 414.31,-213.76 404,-205.6 393.81,-197.53 382.85,-188.61 372.92,-180.44"/>
+<polygon fill="black" stroke="black" points="375.25,-177.82 365.31,-174.15 370.79,-183.22 375.25,-177.82"/>
+</g>
+<!-- schema -->
+<g id="node7" class="node">
+<title>schema</title>
+<polygon fill="none" stroke="black" points="516.84,-172.8 425.16,-172.8 425.16,-131.2 522.84,-131.2 522.84,-166.8 516.84,-172.8"/>
+<polyline fill="none" stroke="black" points="516.84,-172.8 516.84,-166.8"/>
+<polyline fill="none" stroke="black" points="522.84,-166.8 516.84,-166.8"/>
+<text xml:space="preserve" text-anchor="middle" x="474" y="-156.2" font-family="Helvetica,sans-Serif" font-size="14.00">schema.sql</text>
+<text xml:space="preserve" text-anchor="middle" x="474" y="-139.4" font-family="Helvetica,sans-Serif" font-size="14.00">(DB schema)</text>
+</g>
+<!-- app&#45;&gt;schema -->
+<g id="edge6" class="edge">
+<title>app-&gt;schema</title>
+<path fill="none" stroke="black" d="M474,-230.31C474,-216.14 474,-198.99 474,-184.46"/>
+<polygon fill="black" stroke="black" points="477.5,-184.49 474,-174.49 470.5,-184.49 477.5,-184.49"/>
+</g>
+<!-- templates -->
+<g id="node8" class="node">
+<title>templates</title>
+<polygon fill="none" stroke="black" points="684.35,-172.8 681.35,-176.8 660.35,-176.8 657.35,-172.8 565.65,-172.8 565.65,-131.2 684.35,-131.2 684.35,-172.8"/>
+<text xml:space="preserve" text-anchor="middle" x="625" y="-156.2" font-family="Helvetica,sans-Serif" font-size="14.00">HTML templates</text>
+<text xml:space="preserve" text-anchor="middle" x="625" y="-139.4" font-family="Helvetica,sans-Serif" font-size="14.00">(Jinja2)</text>
+</g>
+<!-- app&#45;&gt;templates -->
+<g id="edge7" class="edge">
+<title>app-&gt;templates</title>
+<path fill="none" stroke="black" d="M514.86,-230.31C537.38,-214.51 565.15,-195.01 587.17,-179.55"/>
+<polygon fill="black" stroke="black" points="589.12,-182.46 595.3,-173.85 585.1,-176.73 589.12,-182.46"/>
+</g>
+<!-- requirements -->
+<g id="node10" class="node">
+<title>requirements</title>
+<polygon fill="none" stroke="black" points="880.23,-172.8 727.77,-172.8 727.77,-131.2 886.23,-131.2 886.23,-166.8 880.23,-172.8"/>
+<polyline fill="none" stroke="black" points="880.23,-172.8 880.23,-166.8"/>
+<polyline fill="none" stroke="black" points="886.23,-166.8 880.23,-166.8"/>
+<text xml:space="preserve" text-anchor="middle" x="807" y="-156.2" font-family="Helvetica,sans-Serif" font-size="14.00">requirements.txt</text>
+<text xml:space="preserve" text-anchor="middle" x="807" y="-139.4" font-family="Helvetica,sans-Serif" font-size="14.00">&lt;&lt;dependency spec&gt;&gt;</text>
+</g>
+<!-- app&#45;&gt;requirements -->
+<g id="edge9" class="edge">
+<title>app-&gt;requirements</title>
+<path fill="none" stroke="black" d="M534.16,-248.9C580.79,-240.13 646.57,-225.66 702,-205.6 722.29,-198.26 743.74,-188 761.94,-178.49"/>
+<polygon fill="black" stroke="black" points="763.44,-181.65 770.62,-173.86 760.15,-175.47 763.44,-181.65"/>
+</g>
+<!-- jinja -->
+<g id="node3" class="node">
+<title>jinja</title>
+<polygon fill="none" stroke="black" points="105.96,-65.4 16.04,-65.4 16.04,-23.8 105.96,-23.8 105.96,-65.4"/>
+<text xml:space="preserve" text-anchor="middle" x="61" y="-48.8" font-family="Helvetica,sans-Serif" font-size="14.00">Jinja2</text>
+<text xml:space="preserve" text-anchor="middle" x="61" y="-32" font-family="Helvetica,sans-Serif" font-size="14.00">(templating)</text>
+</g>
+<!-- flask&#45;&gt;jinja -->
+<g id="edge2" class="edge">
+<title>flask-&gt;jinja</title>
+<path fill="none" stroke="black" d="M182.89,-133.6C159.78,-116.91 124.57,-91.49 97.92,-72.25"/>
+<polygon fill="black" stroke="black" points="100.27,-69.63 90.12,-66.62 96.18,-75.31 100.27,-69.63"/>
+</g>
+<!-- werkzeug -->
+<g id="node4" class="node">
+<title>werkzeug</title>
+<polygon fill="none" stroke="black" points="265.18,-65.4 148.82,-65.4 148.82,-23.8 265.18,-23.8 265.18,-65.4"/>
+<text xml:space="preserve" text-anchor="middle" x="207" y="-48.8" font-family="Helvetica,sans-Serif" font-size="14.00">Werkzeug</text>
+<text xml:space="preserve" text-anchor="middle" x="207" y="-32" font-family="Helvetica,sans-Serif" font-size="14.00">(HTTP / routing)</text>
+</g>
+<!-- flask&#45;&gt;werkzeug -->
+<g id="edge3" class="edge">
+<title>flask-&gt;werkzeug</title>
+<path fill="none" stroke="black" d="M207,-133.6C207,-118.25 207,-95.51 207,-76.99"/>
+<polygon fill="black" stroke="black" points="210.5,-77.06 207,-67.06 203.5,-77.06 210.5,-77.06"/>
+</g>
+<!-- db -->
+<g id="node6" class="node">
+<title>db</title>
+<path fill="none" stroke="black" d="M467.99,-68C467.99,-70.87 432.14,-73.2 388,-73.2 343.86,-73.2 308.01,-70.87 308.01,-68 308.01,-68 308.01,-21.2 308.01,-21.2 308.01,-18.33 343.86,-16 388,-16 432.14,-16 467.99,-18.33 467.99,-21.2 467.99,-21.2 467.99,-68 467.99,-68"/>
+<path fill="none" stroke="black" d="M467.99,-68C467.99,-65.13 432.14,-62.8 388,-62.8 343.86,-62.8 308.01,-65.13 308.01,-68"/>
+<text xml:space="preserve" text-anchor="middle" x="388" y="-48.8" font-family="Helvetica,sans-Serif" font-size="14.00">whoknows.db</text>
+<text xml:space="preserve" text-anchor="middle" x="388" y="-32" font-family="Helvetica,sans-Serif" font-size="14.00">&lt;&lt;persistent storage&gt;&gt;</text>
+</g>
+<!-- sqlite&#45;&gt;db -->
+<g id="edge5" class="edge">
+<title>sqlite-&gt;db</title>
+<path fill="none" stroke="black" d="M349.03,-131.18C355.09,-117.87 363.27,-99.91 370.57,-83.88"/>
+<polygon fill="black" stroke="black" points="373.62,-85.62 374.58,-75.07 367.25,-82.72 373.62,-85.62"/>
+</g>
+<!-- static -->
+<g id="node9" class="node">
+<title>static</title>
+<polygon fill="none" stroke="black" points="672.68,-65.4 669.68,-69.4 648.68,-69.4 645.68,-65.4 577.32,-65.4 577.32,-23.8 672.68,-23.8 672.68,-65.4"/>
+<text xml:space="preserve" text-anchor="middle" x="625" y="-48.8" font-family="Helvetica,sans-Serif" font-size="14.00">Static assets</text>
+<text xml:space="preserve" text-anchor="middle" x="625" y="-32" font-family="Helvetica,sans-Serif" font-size="14.00">(CSS / JS)</text>
+</g>
+<!-- templates&#45;&gt;static -->
+<g id="edge8" class="edge">
+<title>templates-&gt;static</title>
+<path fill="none" stroke="black" d="M625,-131.18C625,-115.96 625,-94.66 625,-77.12"/>
+<polygon fill="black" stroke="black" points="628.5,-77.21 625,-67.21 621.5,-77.21 628.5,-77.21"/>
+</g>
+</g>
+</svg>
