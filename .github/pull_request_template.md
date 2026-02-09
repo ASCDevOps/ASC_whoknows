@@ -1,18 +1,7 @@
-# Pull Request Check
+# Pull Request
 
-## Beskrivelse
-Kort beskrivelse.
+## Hvad er ændret
 
----
+## Fokus for review
 
-## PR Check
-- [ ] Koden bygger
-- [ ] Forståelig ændrin
-- [ ] Ingen debug / midlertidig kode
-- [ ] Følger eksisterende struktur
-- [ ] Koden er læsbar og forståelig
-
----
-
-## Noter til reviewer
-Evt. ting der kræver ekstra opmærksomhed
+## Kontekst / bemærkninger
