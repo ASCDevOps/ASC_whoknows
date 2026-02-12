@@ -27,19 +27,15 @@ func (h *registerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // GET /login - Serve Login Page
 type loginHandler struct{}
 
+var loginTemplate = template.Must(template.ParseFiles("templates/test.html"))
+
 func (h *loginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		writeJSON(w, http.StatusMethodNotAllowed, map[string]any{
-			"ok":    false,
-			"error": "Method not allowed",
-		})
+		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
 
-	writeJSON(w, http.StatusOK, map[string]any{
-		"ok":      true,
-		"message": "Login endpoint ready. Use POST /api/login to authenticate.",
-	})
+	_ = loginTemplate.Execute(w, nil)
 }
 
 // Helpers

@@ -1,8 +1,9 @@
 package main
 
 import (
-	"encoding/json" // Needed for endpoints
-	"net/http"      // http-pakke in go
+	"encoding/json"
+	"net/http"    
+	"strings"  
 )
 
 // GET /api/logout - Logout
@@ -26,53 +27,53 @@ type apiLoginHandler struct{}
 
 func (h *apiLoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		writeJSON(w, http.StatusMethodNotAllowed, map[string]any{
-			"ok":    false,
-			"error": "Method not allowed",
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	var body BodyLoginAPILoginPost
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		writeJSON(w, 422, HTTPValidationError{
+			Detail: []ValidationError{
+				{
+					Loc:  []any{"body"},
+					Msg:  "Invalid request body",
+					Type: "value_error",
+				},
+			},
 		})
 		return
 	}
 
-	if err := r.ParseForm(); err != nil {
-		writeJSON(w, http.StatusBadRequest, map[string]any{
-			"ok":    false,
-			"error": "Bad request",
+
+	if strings.TrimSpace(body.Username) == "" ||
+		strings.TrimSpace(body.Password) == "" {
+
+		writeJSON(w, 422, HTTPValidationError{
+			Detail: []ValidationError{
+				{
+					Loc:  []any{"body", "username"},
+					Msg:  "Field required",
+					Type: "value_error.missing",
+				},
+				{
+					Loc:  []any{"body", "password"},
+					Msg:  "Field required",
+					Type: "value_error.missing",
+				},
+			},
 		})
 		return
 	}
-	// "Session" via cookie
+
+	// Fake login success (DB ikke klar endnu)
 	setUserID(w, "1")
 
-	writeJSON(w, http.StatusOK, map[string]any{
-		"ok":     true,
-		"userId": "1",
-	})
-}
+	status := 200
+	message := "logged in"
 
-type apiMeHandler struct{}
-
-func (h *apiMeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		writeJSON(w, http.StatusMethodNotAllowed, map[string]any{
-			"ok":    false,
-			"error": "Method not allowed",
-		})
-		return
-	}
-
-	userID := getUserID(r)
-	if userID == "" {
-		writeJSON(w, http.StatusUnauthorized, map[string]any{
-			"ok":     false,
-			"authed": false,
-			"error":  "Not logged in",
-		})
-		return
-	}
-
-	writeJSON(w, http.StatusOK, map[string]any{
-		"ok":     true,
-		"authed": true,
-		"userId": userID,
+	writeJSON(w, 200, AuthResponse{
+		StatusCode: &status,
+		Message:    &message,
 	})
 }
