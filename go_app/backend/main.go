@@ -3,6 +3,11 @@ package main
 import (
 	"html/template" // templating-pakke in go
 	"net/http"      // http-pakke in go
+	"database/sql"
+	"fmt"
+	"log"
+
+	_ "modernc.org/sqlite"
 )
 
 var testTemplate = template.Must(template.ParseFiles("templates/test.html"))
@@ -10,6 +15,22 @@ var testTemplate = template.Must(template.ParseFiles("templates/test.html"))
 func main() {
 
 	// Create a new request multiplexer
+		
+	//opens whoknows.db if null creates whoknows.db
+	db, err :=sql.Open("sqlite", "file:whoknows.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	//error handling
+	if err := db.Ping(); err != nil {
+		log.Fatal(err)
+	}
+
+
+	//print so we know if database is connected 
+	fmt.Println("SQLite connected!")
 	// Take incoming requests and dispatch them to the matching handlers
 	mux := http.NewServeMux()
 
@@ -17,7 +38,7 @@ func main() {
 	mux.Handle("/", &rootHandler{})
 
 	// GET /register - Serve Register Page
-	// TODO: Implement ^
+	// TODO: Implement 
 
 	// GET /login - Serve Login Page
 	mux.Handle("/login", &loginHandler{})
