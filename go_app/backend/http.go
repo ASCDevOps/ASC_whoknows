@@ -3,9 +3,11 @@ package main
 import (
 	"encoding/json" // Needed for endpoints
 	"net/http"      // http-pakke in go
+	"html/template" // templating-pakke in go
 )
 
 type rootHandler struct{}
+var testTemplate = template.Must(template.ParseFiles("templates/test.html"))
 
 func (h *rootHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Serve Root Page

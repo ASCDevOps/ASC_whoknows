@@ -1,11 +1,8 @@
 package main
 
 import (
-	"html/template" // templating-pakke in go
 	"net/http"      // http-pakke in go
 )
-
-var testTemplate = template.Must(template.ParseFiles("templates/test.html"))
 
 func main() {
 
