@@ -2,16 +2,26 @@ package main
 
 import (
 	"encoding/json" // Needed for endpoints
-	"net/http"      // http-pakke in go
 	"html/template" // templating-pakke in go
+	"net/http"      // http-pakke in go
 )
 
 type rootHandler struct{}
-var testTemplate = template.Must(template.ParseFiles("templates/test.html"))
+
+var rootTemplate = template.Must(template.ParseFiles("templates/test.html"))
 
 func (h *rootHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Serve Root Page
-	testTemplate.Execute(w, nil)
+	rootTemplate.Execute(w, nil)
+}
+
+type registerHandler struct{}
+
+var registerTemplate = template.Must(template.ParseFiles("templates/test.html"))
+
+func (h *registerHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// Serve Register Page
+	registerTemplate.Execute(w, nil)
 }
 
 // GET /login - Serve Login Page

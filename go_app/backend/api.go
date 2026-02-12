@@ -5,15 +5,7 @@ import (
 	"net/http"      // http-pakke in go
 )
 
-// Schemas
-// json: matching names for json
-// omiempty = can be nil
-type AuthResponse struct {
-	StatusCode *int    `json:"statusCode,omitempty"`
-	Message    *string `json:"message,omitempty"`
-}
-
-
+// GET /api/logout - Logout
 type logoutHandler struct{}
 
 func (h *logoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +20,6 @@ func (h *logoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(resp)
 }
-
 
 // POST /api/login
 type apiLoginHandler struct{}
@@ -72,9 +63,9 @@ func (h *apiMeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	userID := getUserID(r)
 	if userID == "" {
 		writeJSON(w, http.StatusUnauthorized, map[string]any{
-			"ok":      false,
-			"authed":  false,
-			"error":   "Not logged in",
+			"ok":     false,
+			"authed": false,
+			"error":  "Not logged in",
 		})
 		return
 	}
