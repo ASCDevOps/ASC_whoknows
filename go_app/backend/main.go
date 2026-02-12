@@ -52,7 +52,7 @@ func (h *logoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// JSON-response
 	resp := map[string]string{
 		"status": "logged out",
-	}
+	}	
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(resp)
