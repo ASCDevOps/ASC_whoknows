@@ -1,8 +1,8 @@
 package main
 
 import (
-	"encoding/json" // Needed for endpoints
-	"net/http"      // http-pakke in go
+	"encoding/json" 
+	"net/http"      
 )
 
 // Schemas
@@ -29,59 +29,30 @@ func (h *logoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
-
 // POST /api/login
 type apiLoginHandler struct{}
 
 func (h *apiLoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		writeJSON(w, http.StatusMethodNotAllowed, map[string]any{
-			"ok":    false,
-			"error": "Method not allowed",
-		})
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	if err := r.ParseForm(); err != nil {
-		writeJSON(w, http.StatusBadRequest, map[string]any{
-			"ok":    false,
-			"error": "Bad request",
-		})
-		return
-	}
-	// "Session" via cookie
-	setUserID(w, "1")
-
-	writeJSON(w, http.StatusOK, map[string]any{
-		"ok":     true,
-		"userId": "1",
-	})
-}
-
-type apiMeHandler struct{}
-
-func (h *apiMeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		writeJSON(w, http.StatusMethodNotAllowed, map[string]any{
-			"ok":    false,
-			"error": "Method not allowed",
-		})
+		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
 
-	userID := getUserID(r)
-	if userID == "" {
-		writeJSON(w, http.StatusUnauthorized, map[string]any{
-			"ok":      false,
-			"authed":  false,
-			"error":   "Not logged in",
-		})
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+
+	// Simpel fake validering
+	if username == "admin" && password == "1234" {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`{"statusCode":200,"message":"Logged in"}`))
 		return
 	}
 
-	writeJSON(w, http.StatusOK, map[string]any{
-		"ok":     true,
-		"authed": true,
-		"userId": userID,
-	})
+	http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 }
