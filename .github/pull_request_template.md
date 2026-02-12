@@ -1,7 +1,7 @@
 # Pull Request
 
-## Hvad er ændret
+## Description of PR
+* <Description here>
 
-## Fokus for review
-
-## Kontekst / bemærkninger
+## Special Attention
+* <If anything requires special attention, write here>

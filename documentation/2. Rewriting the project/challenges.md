@@ -1,3 +1,7 @@
+# 10-02-2026
+
+* Html is made as Jinja2-templates, therefore they have to be translated into Go-templates (import "html/template")
+
 # 11-02 - 2026
 * During the migration from a Flask application to Go, I faced several structural and architectural challenges. 
 * First, I had to resolve environment issues, including installing Go and configuring the system PATH correctly. 
