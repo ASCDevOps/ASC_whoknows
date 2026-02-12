@@ -1,10 +1,10 @@
 package main
 
 import (
-	"net/http"      // http-pakke in go
 	"database/sql"
 	"fmt"
 	"log"
+	"net/http" // http-pakke in go
 
 	_ "modernc.org/sqlite"
 )
@@ -12,9 +12,9 @@ import (
 func main() {
 
 	// Create a new request multiplexer
-		
+
 	//opens whoknows.db if null creates whoknows.db
-	db, err :=sql.Open("sqlite", "file:whoknows.db")
+	db, err := sql.Open("sqlite", "file:whoknows.db")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -25,8 +25,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-
-	//print so we know if database is connected 
+	//print so we know if database is connected
 	fmt.Println("SQLite connected!")
 	// Take incoming requests and dispatch them to the matching handlers
 	mux := http.NewServeMux()
@@ -35,7 +34,7 @@ func main() {
 	mux.Handle("/", &rootHandler{})
 
 	// GET /register - Serve Register Page
-	// TODO: Implement 
+	mux.Handle("/register", &registerHandler{})
 
 	// GET /login - Serve Login Page
 	mux.Handle("/login", &loginHandler{})
