@@ -4,8 +4,10 @@ package main
 // omiempty = can be nil
 
 // Request Bodies
-// SKRIV HVILKET ENDPOINT DET BRUGES TIL HER
+// Post /api/login
 type BodyLoginAPILoginPost struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 // SKRIV HVILKET ENDPOINT DET BRUGES TIL HER
@@ -28,12 +30,17 @@ type SearchResponse struct {
 }
 
 // Validation Errors
-// SKRIV HVILKET ENDPOINT DET BRUGES TIL HER
+
+// 422 validation Error - Post api/login
 type ValidationError struct {
+	Loc  []any  `json:"loc"` // (string | integer)
+	Msg  string `json:"msg"`
+	Type string `json:"type"`
 }
 
-// SKRIV HVILKET ENDPOINT DET BRUGES TIL HER
+// 422 validation Error wrapper . Post api/login
 type HTTPValidationError struct {
+	Detail []ValidationError `json:"detail"`
 }
 
 // SKRIV HVILKET ENDPOINT DET BRUGES TIL HER
