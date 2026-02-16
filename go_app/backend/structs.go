@@ -21,12 +21,15 @@ type AuthResponse struct {
 	Message    *string `json:"message,omitempty"`
 }
 
-// SKRIV HVILKET ENDPOINT DET BRUGES TIL HER
+// GET /api/search til 442 response
 type StandardResponse struct {
+	StatusCode *int    `json:"statusCode,omitempty"`
+	Message    *string `json:"message,omitempty"`
 }
 
-// SKRIV HVILKET ENDPOINT DET BRUGES TIL HER
+// GET /api/search til 200 response
 type SearchResponse struct {
+	Data []map[string]any `json:"data"`
 }
 
 // Validation Errors
