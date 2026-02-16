@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http" // http-pakke in go
+	"os"
 
+	"github.com/joho/godotenv" // for loading .env files
 	_ "modernc.org/sqlite"
 )
 
@@ -30,9 +32,6 @@ func main() {
 		password TEXT NOT NULL
 	);
 
-	INSERT INTO users (username, email, password) 
-	VALUES ('admin', 'keamonk1@stud.kea.dk', '5f4dcc3b5aa765d61d8327deb882cf99');
-
 	CREATE TABLE IF NOT EXISTS pages (
 		title TEXT PRIMARY KEY UNIQUE,
 		url TEXT NOT NULL UNIQUE,
@@ -45,6 +44,17 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// Load .env file
+	err = godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	fmt.Println("ADMIN_USERNAME:", os.Getenv("ADMIN_USERNAME"))
+	fmt.Println("ADMIN_EMAIL:", os.Getenv("ADMIN_EMAIL"))
+	fmt.Println("ADMIN_PASSWORD:", os.Getenv("ADMIN_PASSWORD"))
+
+	createAdminIfNill(db)
 
 	//print so we know if database is connected
 	fmt.Println("SQLite connected!")
@@ -74,4 +84,40 @@ func main() {
 
 	// Run the server on port :8080
 	http.ListenAndServe(":8080", mux)
+}
+
+func createAdminIfNill(db *sql.DB) {
+	adminUsername := os.Getenv("ADMIN_USERNAME")
+	adminEmail := os.Getenv("ADMIN_EMAIL")
+	adminPassword := os.Getenv("ADMIN_PASSWORD")
+
+	if adminUsername == "" || adminEmail == "" || adminPassword == "" {
+		log.Println("Admin .env not set!")
+		return
+	}
+
+	//Check if admin user exists
+	var exists bool
+	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE username = ?)", adminUsername).Scan(&exists)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if exists {
+		log.Println("Admin user already exists.")
+		return
+	}
+
+	//Insert admin
+	_, err = db.Exec(
+		"INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+		adminUsername,
+		adminEmail,
+		adminPassword,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("Admin user created!")
 }
