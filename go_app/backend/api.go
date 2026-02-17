@@ -5,9 +5,6 @@ import (
 	"encoding/json"
 	"net/http"    
 	"strings"
-	"database/sql"  
-	"log"
-	"net/http"
 
 	_ "modernc.org/sqlite"
 )
@@ -94,7 +91,9 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // POST /api/register
-type registerHandlerAPI struct{}
+type registerHandlerAPI struct{
+	db *sql.DB
+}
 
 func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Checks if method is POST
@@ -184,7 +183,7 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Puts data into database using prepared statement to avoid sql-injections
-	stmt, err := db.Prepare(`INSERT INTO users (username, email, password) VALUES (?, ?, ?)`)
+	stmt, err := h.db.Prepare(`INSERT INTO users (username, email, password) VALUES (?, ?, ?)`)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
