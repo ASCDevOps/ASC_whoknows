@@ -71,7 +71,7 @@ func main() {
 	mux.Handle("/login", &loginHandler{})
 
 	// GET /api/search - Search
-	// TODO: Implement ^
+	mux.Handle("/api/search", &apiSearchHandler{DB: db})
 
 	// POST /api/register - Register
 	// TODO: Implement ^
