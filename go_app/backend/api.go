@@ -1,10 +1,15 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"    
 	"strings"
 	"database/sql"  
+	"log"
+	"net/http"
+
+	_ "modernc.org/sqlite"
 )
 
 // GET /api/logout - Logout
@@ -88,6 +93,132 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, 200, SearchResponse{Data: data})
 }
 
+// POST /api/register
+type registerHandlerAPI struct{}
+
+func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// Checks if method is POST
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Parses form, 
+	if err := r.ParseForm(); err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"detail": []map[string]interface{}{
+				{
+					"loc":  []string{"body"},
+					"msg":  "Invalid form data",
+					"type": "value_error",
+				},
+			},
+		})
+		return
+	}
+
+	// Gets form-data
+	username := r.FormValue("username")
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+	password2 := r.FormValue("password2")
+
+	// Validates form-data, checks for required, checks if passwords are matching
+	if username == "" {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"detail": []map[string]interface{}{
+				{
+					"loc":  []string{"username"},
+					"msg":  "Field required",
+					"type": "value_error.missing",
+				},
+			},
+		})
+		return
+	}
+	if email == "" {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"detail": []map[string]interface{}{
+				{
+					"loc":  []string{"email"},
+					"msg":  "Field required",
+					"type": "value_error.missing",
+				},
+			},
+		})
+		return
+	}
+	if password == "" {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"detail": []map[string]interface{}{
+				{
+					"loc":  []string{"password"},
+					"msg":  "Field required",
+					"type": "value_error.missing",
+				},
+			},
+		})
+		return
+	}
+	if password2 != "" && password != password2 {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"detail": []map[string]interface{}{
+				{
+					"loc":  []string{"password2"},
+					"msg":  "Passwords do not match",
+					"type": "value_error",
+				},
+			},
+		})
+		return
+	}
+
+	// Puts data into database using prepared statement to avoid sql-injections
+	stmt, err := db.Prepare(`INSERT INTO users (username, email, password) VALUES (?, ?, ?)`)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"status_code": http.StatusInternalServerError,
+			"message":     "Database error",
+		})
+		return
+	}
+	defer stmt.Close()
+
+	// error handling for UNIQUE (username & email) in SQL
+	_, err = stmt.Exec(username, email, password)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusConflict)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"status_code": http.StatusConflict,
+			"message":     "Username or email already exists",
+		})
+		return
+	}
+
+	// Success response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"status_code": http.StatusOK,
+		"message":     "User registered successfully",
+	})
+}
+
+
+
 // POST /api/login
 type apiLoginHandler struct{}
 
@@ -143,3 +274,4 @@ func (h *apiLoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Message:    &message,
 	})
 }
+
