@@ -1,0 +1,13 @@
+name: New Feature
+description: Add new functionality
+title: "[New Feature]: "
+labels: ["new_feature"]
+
+body:
+  - type: textarea
+    id: feature_description
+    attributes:
+      label: Feature description
+      placeholder: "Describe the new feature"
+    validations:
+      required: true

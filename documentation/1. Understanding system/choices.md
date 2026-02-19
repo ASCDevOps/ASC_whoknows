@@ -11,4 +11,4 @@
 * ChatGPT recommends to use GO for writing a server.
 
 # 08-02-2026
-Added a branch rule for PR's on default branch, 2+ developers has to accept PR for merge to complete.
+Added a branch protection-rule for PR's on default branch, 2+ developers has to accept PR for merge to complete.
