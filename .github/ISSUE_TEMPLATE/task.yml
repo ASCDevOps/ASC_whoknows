@@ -1,0 +1,32 @@
+name: Task
+description: Task from Anders
+title: "[Task]: "
+labels: ["task"]
+
+body:
+
+  - type: input
+    id: deadline
+    attributes:
+      label: Deadline
+      placeholder: "Deadline date xx/xx"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      placeholder: |
+        What needs to be done?
+        Thoughts about the task?
+    validations:
+      required: true
+
+  - type: textarea
+    id: link
+    attributes:
+      label: Link to Task (Anders' repository)
+      placeholder: https://github.com/...
+    validations:
+      required: true
