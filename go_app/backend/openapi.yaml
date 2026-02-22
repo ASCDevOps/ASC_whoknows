@@ -1,31 +1,13 @@
 openapi: 3.1.0
 info:
-  title: WhoKnows Go API
-  version: 0.2.0
-  description: |
-    API for WhoKnows (Go + SQLite). Includes HTML pages and JSON endpoints.
-    This spec is maintained manually to match the current server behavior.
-
-servers:
-  - url: http://localhost:8080
-    description: Local development
-
-tags:
-  - name: Pages
-    description: HTML pages served by the app
-  - name: Auth
-    description: Authentication endpoints
-  - name: Search
-    description: Search endpoints
-  - name: Weather
-    description: Weather endpoints
+  title: WhoKnows
+  version: 0.1.0
 
 paths:
+
   /:
     get:
-      tags: [Pages]
       summary: Root page
-      operationId: pages.root
       responses:
         "200":
           description: HTML page
@@ -36,9 +18,7 @@ paths:
 
   /register:
     get:
-      tags: [Pages]
       summary: Register page
-      operationId: pages.register
       responses:
         "200":
           description: HTML page
@@ -49,22 +29,7 @@ paths:
 
   /login:
     get:
-      tags: [Pages]
       summary: Login page
-      operationId: pages.login
-      responses:
-        "200":
-          description: HTML page
-          content:
-            text/html:
-              schema:
-                type: string
-
-  /weather:
-    get:
-      tags: [Pages]
-      summary: Weather page
-      operationId: pages.weather
       responses:
         "200":
           description: HTML page
@@ -75,216 +40,81 @@ paths:
 
   /api/search:
     get:
-      tags: [Search]
-      summary: Search pages by query
-      description: Returns a list of matching pages from the DB.
-      operationId: api.search
+      summary: Search
       parameters:
         - name: q
           in: query
           required: true
-          description: Search query string
           schema:
             type: string
         - name: language
           in: query
           required: false
-          description: Optional language filter (en/da)
           schema:
             type: string
-            enum: [en, da]
       responses:
         "200":
-          description: Search results
+          description: Search result
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SearchResponse"
-        "400":
-          description: Bad request (missing or invalid query)
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-  /api/weather:
-    get:
-      tags: [Weather]
-      summary: Weather data
-      description: Returns weather payload used by the weather page.
-      operationId: api.weather
-      responses:
-        "200":
-          description: Weather response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/StandardResponse"
+                type: object
 
   /api/register:
     post:
-      tags: [Auth]
-      summary: Create user
-      description: Creates a new user in SQLite if username/email is available.
-      operationId: api.register
+      summary: Register user
       requestBody:
         required: true
         content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/RegisterRequestForm"
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                password2:
+                  type: string
       responses:
         "200":
-          description: User created
+          description: Register response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RegisterResponse"
-        "409":
-          description: Username or email already exists
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RegisterResponse"
-        "422":
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ValidationProblem"
+                type: object
 
   /api/login:
     post:
-      tags: [Auth]
-      summary: Login
-      description: Authenticates a user and returns a status message.
-      operationId: api.login
+      summary: Login user
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/LoginRequestJson"
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
       responses:
         "200":
-          description: Login ok
+          description: Login response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthResponse"
-        "401":
-          description: Wrong username/password
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AuthResponse"
-        "422":
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ValidationProblem"
+                type: object
 
   /api/logout:
     get:
-      tags: [Auth]
-      summary: Logout
-      operationId: api.logout
+      summary: Logout user
       responses:
         "200":
-          description: Logout ok
+          description: Logout response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AuthResponse"
-
-components:
-  schemas:
-    AuthResponse:
-      type: object
-      title: AuthResponse
-      properties:
-        statusCode:
-          type: integer
-          description: HTTP-like status for the operation
-        message:
-          type: string
-          description: Human readable message
-      required: [statusCode, message]
-
-    LoginRequestJson:
-      type: object
-      title: LoginRequestJson
-      properties:
-        username:
-          type: string
-          minLength: 1
-        password:
-          type: string
-          minLength: 1
-      required: [username, password]
-
-    RegisterRequestForm:
-      type: object
-      title: RegisterRequestForm
-      properties:
-        username:
-          type: string
-        email:
-          type: string
-        password:
-          type: string
-        password2:
-          type: string
-      required: [username, email, password]
-
-    RegisterResponse:
-      type: object
-      title: RegisterResponse
-      properties:
-        status_code:
-          type: integer
-        message:
-          type: string
-      required: [status_code, message]
-
-    SearchResponse:
-      type: object
-      title: SearchResponse
-      properties:
-        data:
-          type: array
-          description: List of result objects
-          items:
-            type: object
-      required: [data]
-
-    StandardResponse:
-      type: object
-      title: StandardResponse
-      properties:
-        data:
-          type: object
-          description: Payload object (mixed fields)
-      required: [data]
-
-    ErrorResponse:
-      type: object
-      title: ErrorResponse
-      properties:
-        error:
-          type: string
-        hint:
-          type: string
-      required: [error]
-
-    ValidationProblem:
-      type: object
-      title: ValidationProblem
-      properties:
-        statusCode:
-          type: integer
-          default: 422
-        message:
-          type: string
-      required: [statusCode, message]
+                type: object
