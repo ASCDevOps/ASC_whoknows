@@ -11,7 +11,10 @@ import (
 	_ "modernc.org/sqlite"
 )
 
+
 func main() {
+
+	
 
 	// Create a new request multiplexer
 
@@ -82,6 +85,11 @@ func main() {
 	// GET /api/logout - Logout
 	mux.Handle("/api/logout", &logoutHandler{})
 
+	// OpenAPI spec (server filen)
+	mux.HandleFunc("/openapi.yaml", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "openapi.yaml")
+	})
+
 	// Run the server on port :8080
 	http.ListenAndServe(":8080", mux)
 }
@@ -121,3 +129,5 @@ func createAdminIfNill(db *sql.DB) {
 
 	log.Println("Admin user created!")
 }
+
+
