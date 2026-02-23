@@ -4,21 +4,15 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"net/http" // http-pakke in go
+	"net/http"
 	"os"
 
-	"github.com/joho/godotenv" // for loading .env files
+	"github.com/joho/godotenv"
 	_ "modernc.org/sqlite"
 )
 
-
 func main() {
-
-	
-
-	// Create a new request multiplexer
-
-	//opens whoknows.db if null creates whoknows.db
+	// Opens whoknows.db if null creates whoknows.db
 	db, err := sql.Open("sqlite", "whoknows.db")
 	if err != nil {
 		log.Fatal(err)
@@ -57,9 +51,9 @@ func main() {
 	fmt.Println("ADMIN_EMAIL:", os.Getenv("ADMIN_EMAIL"))
 	fmt.Println("ADMIN_PASSWORD:", os.Getenv("ADMIN_PASSWORD"))
 
-	createAdminIfNill(db)
+	createAdminIfNil(db)
 
-	//print so we know if database is connected
+	// Print so we know if database is connected
 	fmt.Println("SQLite connected!")
 	// Take incoming requests and dispatch them to the matching handlers
 	mux := http.NewServeMux()
@@ -85,16 +79,11 @@ func main() {
 	// GET /api/logout - Logout
 	mux.Handle("/api/logout", &logoutHandler{})
 
-	// OpenAPI spec (server filen)
-	mux.HandleFunc("/openapi.yaml", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "openapi.yaml")
-	})
-
 	// Run the server on port :8080
 	http.ListenAndServe(":8080", mux)
 }
 
-func createAdminIfNill(db *sql.DB) {
+func createAdminIfNil(db *sql.DB) {
 	adminUsername := os.Getenv("ADMIN_USERNAME")
 	adminEmail := os.Getenv("ADMIN_EMAIL")
 	adminPassword := os.Getenv("ADMIN_PASSWORD")
@@ -104,7 +93,7 @@ func createAdminIfNill(db *sql.DB) {
 		return
 	}
 
-	//Check if admin user exists
+	// Check if admin user exists
 	var exists bool
 	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE username = ?)", adminUsername).Scan(&exists)
 	if err != nil {
@@ -116,7 +105,7 @@ func createAdminIfNill(db *sql.DB) {
 		return
 	}
 
-	//Insert admin
+	// Insert admin
 	_, err = db.Exec(
 		"INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
 		adminUsername,
@@ -129,5 +118,3 @@ func createAdminIfNill(db *sql.DB) {
 
 	log.Println("Admin user created!")
 }
-
-
