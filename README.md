@@ -1,5 +1,5 @@
 # DevOps - Rewriting WhoKnows_Variations
-
+[![DeepSource](https://app.deepsource.com/gh/ASCDevOps/ASC_whoknows.svg/?label=resolved+issues&show_trend=true&token=jVwdZ0qK59RhjbIma0eefs0R)](https://app.deepsource.com/gh/ASCDevOps/ASC_whoknows/)
 
 ## Documentation
 * Each week has a number
