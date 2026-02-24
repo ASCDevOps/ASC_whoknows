@@ -3,7 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"net/http"    
+	"net/http"
 	"strings"
 
 	_ "modernc.org/sqlite"
@@ -91,7 +91,7 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // POST /api/register
-type registerHandlerAPI struct{
+type registerHandlerAPI struct {
 	db *sql.DB
 }
 
@@ -102,7 +102,7 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Parses form, 
+	// Parses form,
 	if err := r.ParseForm(); err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnprocessableEntity)
@@ -216,8 +216,6 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-
-
 // POST /api/login
 type apiLoginHandler struct{}
 
@@ -240,7 +238,6 @@ func (h *apiLoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-
 
 	if strings.TrimSpace(body.Username) == "" ||
 		strings.TrimSpace(body.Password) == "" {
@@ -274,3 +271,19 @@ func (h *apiLoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Helpers til POST /api/login
+
+func setUserID(w http.ResponseWriter, userID string) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "user_id",
+		Value:    userID,
+		Path:     "/",
+		HttpOnly: true,
+	})
+}
+
+func writeJSON(w http.ResponseWriter, status int, payload any) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	_ = json.NewEncoder(w).Encode(payload)
+}
