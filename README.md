@@ -17,3 +17,9 @@
 1. Documentation
 2. python_app
 3. go_app
+
+## Github Badge - ASC_whoknows
+![Build](https://img.shields.io/github/actions/workflow/status/ASCDevOps/ASC_whoknows/GoCI.yml?branch=main&label=Build&style=for-the-badge)
+![Go Version](https://img.shields.io/github/go-mod/go-version/ASCDevOps/ASC_whoknows?style=for-the-badge)
+![Release](https://img.shields.io/github/v/release/ASCDevOps/ASC_whoknows?style=for-the-badge)
+![License](https://img.shields.io/github/license/ASCDevOps/ASC_whoknows?style=for-the-badge)

@@ -1,0 +1,34 @@
+name: Go CI
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: go_app/backend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go_app/backend/go.mod
+          cache: true
+          cache-dependency-path: go_app/backend/go.sum
+
+      - name: Run tests
+        run: go test ./... -v
