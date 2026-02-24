@@ -12,7 +12,12 @@ import (
 // GET /api/logout - Logout
 type logoutHandler struct{}
 
-func (h *logoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (*logoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
 	status := 200
 	message := "logged out"
 
@@ -219,7 +224,7 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // POST /api/login
 type apiLoginHandler struct{}
 
-func (h *apiLoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (*apiLoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
