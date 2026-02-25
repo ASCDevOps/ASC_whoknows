@@ -22,4 +22,4 @@
 ![Build](https://img.shields.io/github/actions/workflow/status/ASCDevOps/ASC_whoknows/GoCI.yml?branch=master&label=Build&style=for-the-badge)
 ![Go Version](https://img.shields.io/github/go-mod/go-version/ASCDevOps/ASC_whoknows?style=for-the-badge)
 ![Release](https://img.shields.io/github/v/release/ASCDevOps/ASC_whoknows?style=for-the-badge)
-[![Super-Linter](https://github.com/<OWNER>/<REPOSITORY>/actions/workflows/<WORKFLOW_FILE_NAME>/badge.svg)](https://github.com/marketplace/actions/super-linter)
+[![Super-Linter](https://github.com/<OWNER>/<REPOSITORY>/actions/workflows/
