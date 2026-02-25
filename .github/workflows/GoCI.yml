@@ -42,7 +42,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Super Linter
-        uses: github/super-linter@v4
+        uses: github/golangci/golangci-lint@5d1e709b7be35cb2025444e19de266b056b7b7ee
         env:
           DEAFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
