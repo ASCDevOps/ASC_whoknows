@@ -55,14 +55,14 @@ return db, nil
 
 }
 
-	func createAdminIfNil(db *sql.DB) {
+	func createAdminIfNil(db *sql.DB) error {
 	adminUsername := os.Getenv("ADMIN_USERNAME")
 	adminEmail := os.Getenv("ADMIN_EMAIL")
 	adminPassword := os.Getenv("ADMIN_PASSWORD")
 
 	if adminUsername == "" || adminEmail == "" || adminPassword == "" {
 		log.Println("Admin .env not set!")
-		return
+		return nil
 	}
 
 	// Check if admin user exists
@@ -75,7 +75,7 @@ return db, nil
 
 	if exists {
 		log.Println("Admin user already exists.")
-		return
+		return nil
 	}
 
 	// Insert admin
@@ -88,7 +88,7 @@ return db, nil
 
 	if err != nil{
 		log.Println(err)
-		return
+		return nil
 	}
 
 	log.Println("Admin user created!")
