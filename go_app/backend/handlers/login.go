@@ -93,8 +93,8 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	msg := "logged in"
 	writeJSON(w, 200, structs.AuthResponse{StatusCode: &status, Message: &msg})
 }
-// Helpers til POST /api/login
 
+// Helpers til POST /api/login
 func writeJSON(w http.ResponseWriter, status int, payload any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
