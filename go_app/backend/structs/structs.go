@@ -1,4 +1,4 @@
-package main
+package structs
 
 // json: matching names for json
 // omiempty = can be nil

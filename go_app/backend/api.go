@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 	_ "modernc.org/sqlite"
+  "whoknows_backend/structs"
 )
 
 // GET /api/logout - Logout
@@ -20,7 +21,7 @@ func (*logoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	status := 200
 	message := "logged out"
 
-	resp := AuthResponse{
+	resp := structs.AuthResponse{
 		StatusCode: &status,
 		Message:    &message,
 	}
@@ -50,7 +51,7 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if strings.TrimSpace(q) == "" {
 		status := 422
 		msg := "q is required"
-		writeJSON(w, 422, StandardResponse{
+		writeJSON(w, 422, structs.StandardResponse{
 			StatusCode: &status,
 			Message:    &msg,
 		})
@@ -91,7 +92,7 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	writeJSON(w, 200, SearchResponse{Data: data})
+	writeJSON(w, 200, structs.SearchResponse{Data: data})
 }
 
 // POST /api/register
