@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -50,6 +51,9 @@ func InitDB() (*sql.DB, error) {
 	// Print so we know if database is connected
 	fmt.Println("SQLite connected!")
 
+return db, nil
+}
+
 	func createAdminIfNil(db *sql.DB) {
 	adminUsername := os.Getenv("ADMIN_USERNAME")
 	adminEmail := os.Getenv("ADMIN_EMAIL")
@@ -81,6 +85,4 @@ func InitDB() (*sql.DB, error) {
 	)
 
 	log.Println("Admin user created!")
-}
-return db, nil
 }
