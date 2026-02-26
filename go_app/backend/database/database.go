@@ -19,7 +19,7 @@ import (
 	}
 
 	// Opens whoknows.db if null creates whoknows.db
-	db, err := sql.Open("sqlite3", "whoknows.db")
+	db, err := sql.Open("sqlite", "whoknows.db")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,9 +46,9 @@ import (
 		log.Fatal(err)
 	}
 
-	fmt.Println("ADMIN_USERNAME:", os.Getenv("ADMIN_USERNAME"))
-	fmt.Println("ADMIN_EMAIL:", os.Getenv("ADMIN_EMAIL"))
-	fmt.Println("ADMIN_PASSWORD:", os.Getenv("ADMIN_PASSWORD"))
+	Println("ADMIN_USERNAME:", os.Getenv("ADMIN_USERNAME"))
+	Println("ADMIN_EMAIL:", os.Getenv("ADMIN_EMAIL"))
+	Println("ADMIN_PASSWORD:", os.Getenv("ADMIN_PASSWORD"))
 
 	createAdminIfNil(db)
 
