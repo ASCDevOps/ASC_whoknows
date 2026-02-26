@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
-	"log"
 
 	"github.com/joho/godotenv"
 	_ "modernc.org/sqlite"
@@ -22,7 +21,7 @@ func InitDB() (*sql.DB, error) {
 	// Opens whoknows.db if null creates whoknows.db
 	db, err := sql.Open("sqlite", "whoknows.db")
 	if err != nil {
-		log.Fatal(err)
+		return nill, err
 	}
 
 	schema := `	
@@ -43,7 +42,7 @@ func InitDB() (*sql.DB, error) {
 
 	_, err = db.Exec(schema)
 	if err != nil {
-		log.Fatal(err)
+		return nill, err
 	}
 }
 
@@ -66,7 +65,7 @@ func InitDB() (*sql.DB, error) {
 	var exists bool
 	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE username = ?)", adminUsername).Scan(&exists)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	if exists {
@@ -82,7 +81,7 @@ func InitDB() (*sql.DB, error) {
 		adminPassword,
 	)
 	if err != nil {
-		log.Fatal(err)
+		return nill, err
 	}
 
 	log.Println("Admin user created!")
