@@ -9,6 +9,8 @@ import (
 
 	"github.com/joho/godotenv"
 	_ "modernc.org/sqlite"
+
+	"whoknows_backend/handlers"
 )
 
 func main() {
@@ -20,22 +22,22 @@ func main() {
 	defer db.Close()
 
 	schema := `
-	DROP TABLE IF EXISTS users;
+		DROP TABLE IF EXISTS users;
 
-	CREATE TABLE IF NOT EXISTS users (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		username TEXT NOT NULL UNIQUE,
-		email TEXT NOT NULL UNIQUE,
-		password TEXT NOT NULL
-	);
+		CREATE TABLE IF NOT EXISTS users (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			username TEXT NOT NULL UNIQUE,
+			email TEXT NOT NULL UNIQUE,
+			password TEXT NOT NULL
+		);
 
-	CREATE TABLE IF NOT EXISTS pages (
-		title TEXT PRIMARY KEY UNIQUE,
-		url TEXT NOT NULL UNIQUE,
-		language TEXT NOT NULL CHECK(language IN ('en', 'da')) DEFAULT 'en',
-		last_updated TIMESTAMP,
-		content TEXT NOT NULL
-	);`
+		CREATE TABLE IF NOT EXISTS pages (
+			title TEXT PRIMARY KEY UNIQUE,
+			url TEXT NOT NULL UNIQUE,
+			language TEXT NOT NULL CHECK(language IN ('en', 'da')) DEFAULT 'en',
+			last_updated TIMESTAMP,
+			content TEXT NOT NULL
+		);`
 
 	_, err = db.Exec(schema)
 	if err != nil {
@@ -59,13 +61,19 @@ func main() {
 	mux := http.NewServeMux()
 
 	// GET / - Serve Root Page
-	mux.Handle("/", &rootHandler{})
+	mux.Handle("/", &handlers.RootHandler{})
 
 	// GET /register - Serve Register Page
-	mux.Handle("/register", &registerHandler{})
+	mux.Handle("/register", &handlers.RegisterHandler{})
 
 	// GET /login - Serve Login Page
-	mux.Handle("/login", &loginHandler{})
+	mux.Handle("/login", &handlers.LoginHandler{})
+
+	// GET /weather - Serve Weather Page
+	mux.Handle("/weather", &handlers.WeatherHandler{})
+
+	// GET /api/weather - Weather
+	mux.Handle("/api/weather", &handlers.WeatherAPIHandler{})
 
 	// GET /api/search - Search
 	mux.Handle("/api/search", &apiSearchHandler{DB: db})
