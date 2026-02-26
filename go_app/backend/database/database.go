@@ -16,7 +16,7 @@ func InitDB() (*sql.DB, error) {
 	// Load .env file
 	err = godotenv.Load()
 	if err != nil {
-		lreturn nil, err
+		return nil, err
 	}
 
 	// Opens whoknows.db if null creates whoknows.db
