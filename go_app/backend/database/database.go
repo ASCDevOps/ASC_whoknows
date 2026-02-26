@@ -2,6 +2,8 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
+	"os"
 	"log"
 
 	"github.com/joho/godotenv"
