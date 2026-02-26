@@ -79,9 +79,6 @@ func InitDB() (*sql.DB, error) {
 		adminEmail,
 		adminPassword,
 	)
-	if err != nil {
-		return nil, err
-	}
 
 	log.Println("Admin user created!")
 }
