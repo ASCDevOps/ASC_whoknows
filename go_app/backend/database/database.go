@@ -69,10 +69,7 @@ return db, nil
 	var exists bool
 	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE username = ?)", adminUsername).Scan(&exists)
 
-	if err != nil {
 		log.Fatalf("Failed to check for existing admin user: %v", err)
-		return
-	}
 
 	if exists {
 		log.Println("Admin user already exists.")
