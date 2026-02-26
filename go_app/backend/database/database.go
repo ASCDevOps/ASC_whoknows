@@ -16,7 +16,7 @@ func InitDB() (*sql.DB, error) {
 	// Load .env file
 	err = godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		lreturn nil, err
 	}
 
 	// Opens whoknows.db if null creates whoknows.db
@@ -52,6 +52,7 @@ func InitDB() (*sql.DB, error) {
 	fmt.Println("SQLite connected!")
 
 return db, nil
+
 }
 
 	func createAdminIfNil(db *sql.DB) {
@@ -67,6 +68,7 @@ return db, nil
 	// Check if admin user exists
 	var exists bool
 	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE username = ?)", adminUsername).Scan(&exists)
+
 	if err != nil {
 		return nil, err
 	}
