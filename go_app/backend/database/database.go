@@ -44,7 +44,6 @@ func InitDB() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-}
 
 	createAdminIfNil(db)
 
@@ -85,4 +84,6 @@ func InitDB() (*sql.DB, error) {
 	}
 
 	log.Println("Admin user created!")
+}
+return db, nil
 }
