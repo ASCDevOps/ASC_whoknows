@@ -17,7 +17,7 @@ import (
 func main() {
 
 	// Database connection
-	db :=database.InitDB()
+	db,  err :=database.InitDB()
 	if err != nil{
 		log.Fatal(err)
 	}
