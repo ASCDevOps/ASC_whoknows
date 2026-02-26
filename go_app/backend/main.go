@@ -11,7 +11,7 @@ import (
 	_ "modernc.org/sqlite"
 
 	"whoknows_backend/handlers"
-	"whoknows_backend/databse"
+	"whoknows_backend/database"
 )
 
 func main() {
