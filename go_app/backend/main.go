@@ -1,10 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	_ "modernc.org/sqlite"
 
