@@ -92,4 +92,5 @@ return db, nil
 	}
 
 	log.Println("Admin user created!")
+	return nil
 }
