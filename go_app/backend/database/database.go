@@ -19,6 +19,10 @@ func InitDB() (*sql.DB, error) {
 		return nil, err
 	}
 
+	adminUsername := os.Getenv("ADMIN_USERNAME")
+	adminEmail := os.Getenv("ADMIN_EMAIL")
+	adminPassword := os.Getenv("ADMIN_PASSWORD")
+
 	// Opens whoknows.db if null creates whoknows.db
 	db, err := sql.Open("sqlite", "whoknows.db")
 	if err != nil {
@@ -56,9 +60,6 @@ return db, nil
 }
 
 	func createAdminIfNil(db *sql.DB) {
-	adminUsername := os.Getenv("ADMIN_USERNAME")
-	adminEmail := os.Getenv("ADMIN_EMAIL")
-	adminPassword := os.Getenv("ADMIN_PASSWORD")
 
 	if adminUsername == "" || adminEmail == "" || adminPassword == "" {
 		log.Println("Admin .env not set!")
