@@ -1,8 +1,11 @@
 package database
 
 import (
+	"fmt"
 	"log"
+	"os"
 
+	"github.com/joho/godotenv"
 	_ "modernc.org/sqlite"
 )
 

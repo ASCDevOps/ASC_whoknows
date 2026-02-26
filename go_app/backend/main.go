@@ -1,13 +1,11 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/joho/godotenv"
 	_ "modernc.org/sqlite"
 
 	"whoknows_backend/handlers"
