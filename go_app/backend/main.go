@@ -21,9 +21,7 @@ func main() {
 	}
 	defer db.Close()
 
-	schema := `
-		DROP TABLE IF EXISTS users;
-
+	schema := `	
 		CREATE TABLE IF NOT EXISTS users (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			username TEXT NOT NULL UNIQUE,
