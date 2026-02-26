@@ -21,7 +21,7 @@ func InitDB() (*sql.DB, error) {
 	// Opens whoknows.db if null creates whoknows.db
 	db, err := sql.Open("sqlite", "whoknows.db")
 	if err != nil {
-		return nill, err
+		return nil, err
 	}
 
 	schema := `	
@@ -42,7 +42,7 @@ func InitDB() (*sql.DB, error) {
 
 	_, err = db.Exec(schema)
 	if err != nil {
-		return nill, err
+		return nil, err
 	}
 }
 
@@ -81,7 +81,7 @@ func InitDB() (*sql.DB, error) {
 		adminPassword,
 	)
 	if err != nil {
-		return nill, err
+		return nil, err
 	}
 
 	log.Println("Admin user created!")
