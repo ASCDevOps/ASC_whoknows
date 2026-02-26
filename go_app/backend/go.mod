@@ -1,4 +1,4 @@
-module whoknows-backend
+module whoknows_backend
 
 go 1.25.7
 
