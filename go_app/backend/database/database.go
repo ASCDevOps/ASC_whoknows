@@ -16,7 +16,7 @@ func InitDB() (*sql.DB, error) {
 	// Load .env file
 	err = godotenv.Load()
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	// Opens whoknows.db if null creates whoknows.db
@@ -70,7 +70,8 @@ return db, nil
 	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE username = ?)", adminUsername).Scan(&exists)
 
 	if err != nil {
-		return nil, err
+		log.println(err)
+		return
 	}
 
 	if exists {
