@@ -84,5 +84,10 @@ return db, nil
 		adminPassword,
 	)
 
+	if err != nil{
+		log.Println(err)
+		return
+	}
+
 	log.Println("Admin user created!")
 }
