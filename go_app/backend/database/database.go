@@ -10,8 +10,16 @@ import (
 	_ "modernc.org/sqlite"
 )
 
+	
+
+	// Load .env file
+	err = godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	// Opens whoknows.db if null creates whoknows.db
-	db, err := sql.Open("sqlite", "whoknows.db")
+	db, err := sql.Open("sqlite3", "whoknows.db")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,11 +46,6 @@ import (
 		log.Fatal(err)
 	}
 
-	// Load .env file
-	err = godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 	fmt.Println("ADMIN_USERNAME:", os.Getenv("ADMIN_USERNAME"))
 	fmt.Println("ADMIN_EMAIL:", os.Getenv("ADMIN_EMAIL"))
 	fmt.Println("ADMIN_PASSWORD:", os.Getenv("ADMIN_PASSWORD"))
