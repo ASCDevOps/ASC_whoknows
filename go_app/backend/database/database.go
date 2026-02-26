@@ -16,12 +16,8 @@ func InitDB() (*sql.DB, error) {
 	// Load .env file
 	err = godotenv.Load()
 	if err != nil {
-		return nil, err
+		return
 	}
-
-	adminUsername := os.Getenv("ADMIN_USERNAME")
-	adminEmail := os.Getenv("ADMIN_EMAIL")
-	adminPassword := os.Getenv("ADMIN_PASSWORD")
 
 	// Opens whoknows.db if null creates whoknows.db
 	db, err := sql.Open("sqlite", "whoknows.db")
@@ -60,6 +56,9 @@ return db, nil
 }
 
 	func createAdminIfNil(db *sql.DB) {
+	adminUsername := os.Getenv("ADMIN_USERNAME")
+	adminEmail := os.Getenv("ADMIN_EMAIL")
+	adminPassword := os.Getenv("ADMIN_PASSWORD")
 
 	if adminUsername == "" || adminEmail == "" || adminPassword == "" {
 		log.Println("Admin .env not set!")
