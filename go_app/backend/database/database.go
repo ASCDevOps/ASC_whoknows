@@ -14,7 +14,7 @@ import (
 func InitDB() (*sql.DB, error) {
 
 	// Load .env file
-	err = godotenv.Load()
+	err := godotenv.Load()
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ return db, nil
 	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE username = ?)", adminUsername).Scan(&exists)
 
 	if err != nil {
-		log.println(err)
+		log.Println(err)
 		return
 	}
 
