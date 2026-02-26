@@ -45,6 +45,5 @@ jobs:
         uses: super-linter/super-linter@v8.5.0
         env:
           DEFAULT_BRANCH: master
-          env:
-          FILTER_REGEX_EXCLUDE: python_app/.*
+          FILTER_REGEX_EXCLUDE: python_app/.*  #ignores python_app
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
