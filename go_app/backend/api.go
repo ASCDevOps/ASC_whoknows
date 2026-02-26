@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
+	"strconv"
 
 	_ "modernc.org/sqlite"
 )
@@ -222,9 +223,11 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // POST /api/login
-type apiLoginHandler struct{}
+type apiLoginHandler struct{
+	DB*sql.DB
+}
 
-func (*apiLoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h*apiLoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
@@ -244,9 +247,7 @@ func (*apiLoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if strings.TrimSpace(body.Username) == "" ||
-		strings.TrimSpace(body.Password) == "" {
-
+	if strings.TrimSpace(body.Username) == "" || strings.TrimSpace(body.Password) == "" {
 		writeJSON(w, 422, HTTPValidationError{
 			Detail: []ValidationError{
 				{
@@ -264,15 +265,64 @@ func (*apiLoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Fake login success (DB ikke klar endnu)
-	setUserID(w, "1")
+	if h.DB == nil {
+		status := 500
+		msg := "database not configured"
+		writeJSON(w, 500, AuthResponse{
+			StatusCode: &status,
+			Message:    &msg,
+		})
+		return
+	}
+
+	// Slå bruger op
+	var userID int
+	var dbPassword string
+
+	err := h.DB.QueryRow(
+		"SELECT id, password FROM users WHERE username = ?",
+		body.Username,
+	).Scan(&userID, &dbPassword)
+
+	if err == sql.ErrNoRows{
+		status := 401
+		msg :="invalid credentials"
+		writeJSON(w, 401, AuthResponse{
+			StatusCode: &status,
+			Message: &msg,
+		})
+		return
+	}
+
+	if err != nil {
+		status := 500
+		msg := "database error"
+		writeJSON(w, 500, AuthResponse{
+			StatusCode: &status,
+			Message:    &msg,
+		})
+		return
+	}
+
+
+	if dbPassword !=body.Password{
+		status :=401
+		msg :="invalid credentials"
+		writeJSON(w, 401, AuthResponse{
+			StatusCode: &status,
+			Message:  &msg,
+		})
+		return
+	}
+
+	// Success
+	setUserID(w, strconv.Itoa(userID))
 
 	status := 200
-	message := "logged in"
-
+	msg := "logged in"
 	writeJSON(w, 200, AuthResponse{
 		StatusCode: &status,
-		Message:    &message,
+		Message:    &msg,
 	})
 }
 
