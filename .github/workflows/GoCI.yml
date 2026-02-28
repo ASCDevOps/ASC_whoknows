@@ -13,7 +13,6 @@ permissions:
   issues: write
   pull-requests: write
 
-
   statuses: write
 
 jobs:
@@ -34,9 +33,9 @@ jobs:
           cache: true
           cache-dependency-path: go_app/backend/go.sum
 
-      - name: Build 
+      - name: Build
         run: go build ./...
-        
+
       - name: Run tests
         run: go test ./... -v
 
@@ -54,8 +53,8 @@ jobs:
         uses: super-linter/super-linter@v8.5.0
         env:
           DEFAULT_BRANCH: master
-          VALIDATE_ALL_CODEBASE: false         #only checks the files that were changed in the PR, should be set to true if you want to check the entire codebase
-          FILTER_REGEX_EXCLUDE: python_app/.*  #ignores python_app
+          VALIDATE_ALL_CODEBASE: false #only checks the files that were changed in the PR, should be set to true if you want to check the entire codebase
+          FILTER_REGEX_EXCLUDE: python_app/.* #ignores python_app
 
           #disable all linters except for go, very easy to enable/disable linters by changing the value to true/false
           VALIDATE_BIOME: false
@@ -71,5 +70,4 @@ jobs:
           VALIDATE_BIOME_LINT: false
           VALIDATE_GITHUB_ACTIONS_ZIZMOR: false
           VALIDATE_MARKDOWN_PRETTIER: false
-          VALIDATE_YAML_PRETTIER: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
