@@ -56,4 +56,15 @@ jobs:
           DEFAULT_BRANCH: master
           VALIDATE_ALL_CODEBASE: false         #only checks the files that were changed in the PR, should be set to true if you want to check the entire codebase
           FILTER_REGEX_EXCLUDE: python_app/.*  #ignores python_app
+
+          #disable all linters except for go, very easy to enable/disable linters by changing the value to true/false
+          VALIDATE_BIOME: false
+          VALIDATE_CSS: false
+          VALIDATE_HTML: false
+          VALIDATE_MARKDOWN: false
+          VALIDATE_NATURAL_LANGUAGE: false
+          VALIDATE_SPELL: false
+          VALIDATE_JSCPD: false
+          VALIDATE_CHECKOV: false
+          VALIDATE_TRIVY: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
