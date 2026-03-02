@@ -97,7 +97,7 @@ func createAdminIfNil(db *sql.DB) error {
 
 	if err != nil {
 		log.Println(err)
-		return nil
+		return err
 	}
 
 	log.Println("Admin user created!")
