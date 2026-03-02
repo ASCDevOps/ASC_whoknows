@@ -23,6 +23,7 @@
 ### Development / Setup
 This project uses pre-commit hooks to enforce basic code hygiene and Go formatting before each commit.
 Lightweight checks run locally, while full linting and testing are handled in CI.
+* Run the following commands from the repository root.
 
 * Windows (PowerShell)
 Python must be installed
@@ -35,6 +36,9 @@ Using Homebrew:
 
 brew install pre-commit
 pre-commit install
+
+To update hooks:
+pre-commit autoupdate
 
 After installation, the hooks will automatically run on every git commit.
 ---
