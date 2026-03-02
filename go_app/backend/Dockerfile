@@ -28,6 +28,7 @@ COPY --from=builder /build/app .
 COPY --from=builder /build/templates ./templates
 COPY --from=builder /build/handlers ./handlers
 
+# Documentation
 EXPOSE 8080
 
 CMD ["./app"]
