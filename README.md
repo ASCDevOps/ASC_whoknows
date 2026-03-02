@@ -6,6 +6,7 @@
 
 [![DeepSource](https://app.deepsource.com/gh/ASCDevOps/ASC_whoknows.svg/?label=resolved+issues&show_trend=true&token=jVwdZ0qK59RhjbIma0eefs0R)](https://app.deepsource.com/gh/ASCDevOps/ASC_whoknows/)
 
+---
 
 ## Project Structure (MonoRepo)
 * 3 major folders:
@@ -18,3 +19,5 @@
 * Each folder is named after the course structure, which follows each week.
 * MD is used as format
 * Folder has Challenges.md and Choices.md for each week
+
+---
