@@ -22,3 +22,4 @@
 ![Build](https://img.shields.io/github/actions/workflow/status/ASCDevOps/ASC_whoknows/GoCI.yml?branch=master&label=Build&style=for-the-badge)
 ![Go Version](https://img.shields.io/github/go-mod/go-version/ASCDevOps/ASC_whoknows?filename=go_app/backend/go.mod&style=for-the-badge)
 ![Release](https://img.shields.io/github/v/release/ASCDevOps/ASC_whoknows?style=for-the-badge)
+[![Go CI](https://github.com/ASCDevOps/ASC_whoknows/actions/workflows/GoCi.yml/badge.svg)](https://github.com/ASCDevOps/ASC_whoknows/actions/workflows/GoCi.yml)
