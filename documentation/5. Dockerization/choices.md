@@ -7,6 +7,11 @@
 * I have chosen to have chaos in the file structure inside the container in order to meet the deadline.
 * The Dockerfile should be rewritten with a specific WORKDIR, so the file structure is more clean.
 
+# Dockerfile
+* Multi-stage Dockerfile - Smaller runtime image
+* Caches "go.mod"
+
+
 ## Postman Monitoring
 * Added Postman Monitoring
 * We are now monitoring frontend http every hour.

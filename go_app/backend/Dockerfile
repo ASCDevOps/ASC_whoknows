@@ -1,11 +1,9 @@
 # Build Stage
 FROM golang:1.25.7-alpine AS builder
 
-RUN apk add --no-cache gcc musl-dev git
-
 WORKDIR /build
 
-# Copy go.mod/go.sum and download deps
+# Copy go.mod/go.sum and download dependencies
 COPY go.mod go.sum ./
 RUN go mod download
 
@@ -13,22 +11,21 @@ RUN go mod download
 COPY . .
 
 # Build binary
-RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o app
+RUN GOOS=linux GOARCH=amd64 go build -o app
 
 
 # Runtime Stage
 FROM alpine:3.21
 
-RUN apk add --no-cache ca-certificates
-
 WORKDIR /
 
-# Copy binary + templates + handlers
+# Copy src from build
 COPY --from=builder /build/app .
+# Copy templates from build, so app can access them at runtime
 COPY --from=builder /build/templates ./templates
-COPY --from=builder /build/handlers ./handlers
 
 # Documentation
 EXPOSE 8080
 
+# Entrypoint
 CMD ["./app"]
