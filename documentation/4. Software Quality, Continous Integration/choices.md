@@ -53,3 +53,7 @@ Instead of the type's name we have earlier chosen to write the endpoint which us
 
 - We have talked about splitting the current folder-structure up into more folders.
 - With the new structure, we will have a "handlers" folder with a file for both serving html and the api endpoint. But categorized, so weather.go serves /weather and /api/weather.
+
+## 02-03-2026
+- This project uses pre-commit hooks to automatically enforce basic code hygiene and Go formatting before each commit.
+- Lightweight checks (whitespace, YAML validation, gofmt) run locally, while full linting and testing are handled in CI.

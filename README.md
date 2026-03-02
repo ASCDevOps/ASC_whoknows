@@ -20,4 +20,21 @@
 * MD is used as format
 * Folder has Challenges.md and Choices.md for each week
 
+### Development / Setup
+This project uses pre-commit hooks to enforce basic code hygiene and Go formatting before each commit.
+Lightweight checks run locally, while full linting and testing are handled in CI.
+
+* Windows (PowerShell)
+Python must be installed
+
+pip install pre-commit
+pre-commit install
+
+* macOS
+Using Homebrew:
+
+brew install pre-commit
+pre-commit install
+
+After installation, the hooks will automatically run on every git commit.
 ---
