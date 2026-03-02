@@ -3,8 +3,8 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"os"
 	"log"
+	"os"
 
 	"github.com/joho/godotenv"
 	_ "modernc.org/sqlite"
@@ -14,15 +14,19 @@ import (
 func InitDB() (*sql.DB, error) {
 
 	// Load .env file
-	err := godotenv.Load()
-	if err != nil {
-		return nil, err
+	// Ignoring error on purpose, for production purposes.
+	_ : godotenv.Load()
+
+	dbPath := os.Getenv("DB_PATH")
+	if dbPath == "" {
+		// fallback
+		dbPath = "whoknows.db"
 	}
 
 	// Opens whoknows.db if null creates whoknows.db
-	db, err := sql.Open("sqlite", "whoknows.db")
+	db, err := sql.Open("sqlite", dbPath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
 
 	schema := `	
