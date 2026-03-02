@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
-
 	_ "modernc.org/sqlite"
+  "whoknows_backend/structs"
 )
 
 // GET /api/logout - Logout
@@ -21,7 +21,7 @@ func (*logoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	status := 200
 	message := "logged out"
 
-	resp := AuthResponse{
+	resp := structs.AuthResponse{
 		StatusCode: &status,
 		Message:    &message,
 	}
@@ -51,7 +51,7 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if strings.TrimSpace(q) == "" {
 		status := 422
 		msg := "q is required"
-		writeJSON(w, 422, StandardResponse{
+		writeJSON(w, 422, structs.StandardResponse{
 			StatusCode: &status,
 			Message:    &msg,
 		})
@@ -92,7 +92,7 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	writeJSON(w, 200, SearchResponse{Data: data})
+	writeJSON(w, 200, structs.SearchResponse{Data: data})
 }
 
 // POST /api/register
@@ -221,72 +221,7 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// POST /api/login
-type apiLoginHandler struct{}
-
-func (*apiLoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
-	}
-
-	var body BodyLoginAPILoginPost
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		writeJSON(w, 422, HTTPValidationError{
-			Detail: []ValidationError{
-				{
-					Loc:  []any{"body"},
-					Msg:  "Invalid request body",
-					Type: "value_error",
-				},
-			},
-		})
-		return
-	}
-
-	if strings.TrimSpace(body.Username) == "" ||
-		strings.TrimSpace(body.Password) == "" {
-
-		writeJSON(w, 422, HTTPValidationError{
-			Detail: []ValidationError{
-				{
-					Loc:  []any{"body", "username"},
-					Msg:  "Field required",
-					Type: "value_error.missing",
-				},
-				{
-					Loc:  []any{"body", "password"},
-					Msg:  "Field required",
-					Type: "value_error.missing",
-				},
-			},
-		})
-		return
-	}
-
-	// Fake login success (DB ikke klar endnu)
-	setUserID(w, "1")
-
-	status := 200
-	message := "logged in"
-
-	writeJSON(w, 200, AuthResponse{
-		StatusCode: &status,
-		Message:    &message,
-	})
-}
-
-// Helpers til POST /api/login
-
-func setUserID(w http.ResponseWriter, userID string) {
-	http.SetCookie(w, &http.Cookie{
-		Name:     "user_id",
-		Value:    userID,
-		Path:     "/",
-		HttpOnly: true,
-	})
-}
-
+// Hjælper
 func writeJSON(w http.ResponseWriter, status int, payload any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
