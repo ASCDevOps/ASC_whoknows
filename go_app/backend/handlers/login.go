@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"html/template"
 	"database/sql"
 	"encoding/json"
+	"html/template"
 	"net/http"
 	"strings"
 	"whoknows_backend/structs"
@@ -33,17 +33,23 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var body structs.BodyLoginAPILoginPost
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+	if err := r.ParseForm(); err != nil {
 		writeJSON(w, 422, structs.HTTPValidationError{
 			Detail: []structs.ValidationError{
-				{Loc: []any{"body"}, Msg: "Invalid request body", Type: "value_error"},
+				{
+					Loc:  []any{"body"},
+					Msg:  "Invalid request body",
+					Type: "value_error",
+				},
 			},
 		})
 		return
 	}
 
-	if strings.TrimSpace(body.Username) == "" || strings.TrimSpace(body.Password) == "" {
+	username := strings.TrimSpace(r.FormValue("username"))
+	password := strings.TrimSpace(r.FormValue("password"))
+
+	if strings.TrimSpace(username) == "" || strings.TrimSpace(password) == "" {
 		writeJSON(w, 422, structs.HTTPValidationError{
 			Detail: []structs.ValidationError{
 				{Loc: []any{"body", "username"}, Msg: "Field required", Type: "value_error.missing"},
@@ -64,7 +70,7 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var dbPassword string
 	err := h.DB.QueryRow(
 		"SELECT password FROM users WHERE username = ?",
-		body.Username,
+		username,
 	).Scan(&dbPassword)
 
 	if err == sql.ErrNoRows {
@@ -81,7 +87,7 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Password check (plaintext lige nu)
-	if dbPassword != body.Password {
+	if dbPassword != password {
 		status := 401
 		msg := "invalid credentials"
 		writeJSON(w, 401, structs.AuthResponse{StatusCode: &status, Message: &msg})
