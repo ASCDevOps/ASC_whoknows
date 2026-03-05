@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 	"whoknows_backend/structs"
+	"whoknows_backend/security"
 )
 
 type LoginHandler struct{}
@@ -80,8 +81,10 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Password check (plaintext lige nu)
-	if dbPassword != body.Password {
+	// Password check using bcrypt
+	ok := security.CheckPasswordHash(dbPassword, body.Password)
+
+	if !ok {
 		status := 401
 		msg := "invalid credentials"
 		writeJSON(w, 401, structs.AuthResponse{StatusCode: &status, Message: &msg})
