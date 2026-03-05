@@ -3,10 +3,11 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	_ "modernc.org/sqlite"
 	"net/http"
 	"strings"
-	_ "modernc.org/sqlite"
-  "whoknows_backend/structs"
+	"whoknows_backend/security"
+	"whoknows_backend/structs"
 )
 
 // GET /api/logout - Logout
@@ -26,8 +27,9 @@ func (*logoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Message:    &message,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+}
 }
 
 // GET /api/search
@@ -186,6 +188,17 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+	// Hash password
+	hashedPassword, err := security.HashPassword(password)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(map[string]interface{}{
+			"status_code": http.StatusInternalServerError,
+			"message":     "Could not hash password",
+		})
+		return
+	}
 
 	// Puts data into database using prepared statement to avoid sql-injections
 	stmt, err := h.db.Prepare(`INSERT INTO users (username, email, password) VALUES (?, ?, ?)`)
@@ -201,7 +214,7 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer stmt.Close()
 
 	// error handling for UNIQUE (username & email) in SQL
-	_, err = stmt.Exec(username, email, password)
+	_, err = stmt.Exec(username, email, hashedPassword)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusConflict)

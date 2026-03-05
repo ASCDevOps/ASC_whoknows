@@ -6,19 +6,18 @@ import (
 
 	_ "modernc.org/sqlite"
 
-	"whoknows_backend/handlers"
 	"whoknows_backend/database"
+	"whoknows_backend/handlers"
 )
 
 func main() {
 
 	// Database connection
-	db,  err :=database.InitDB()
-	if err != nil{
+	db, err := database.InitDB()
+	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
-
 
 	// Take incoming requests and dispatch them to the matching handlers
 	mux := http.NewServeMux()
@@ -51,5 +50,5 @@ func main() {
 	mux.Handle("/api/logout", &logoutHandler{})
 
 	// Run the server on port :8080
-	http.ListenAndServe(":8080", mux)
+	log.Fatal(http.ListenAndServe(":8080", mux))
 }

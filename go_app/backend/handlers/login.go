@@ -1,11 +1,12 @@
 package handlers
 
 import (
-	"html/template"
 	"database/sql"
 	"encoding/json"
+	"html/template"
 	"net/http"
 	"strings"
+	"whoknows_backend/security"
 	"whoknows_backend/structs"
 )
 
@@ -80,8 +81,10 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Password check (plaintext lige nu)
-	if dbPassword != body.Password {
+	// Password check using bcrypt
+	ok := security.CheckPasswordHash(dbPassword, body.Password)
+
+	if !ok {
 		status := 401
 		msg := "invalid credentials"
 		writeJSON(w, 401, structs.AuthResponse{StatusCode: &status, Message: &msg})
