@@ -50,5 +50,5 @@ func main() {
 	mux.Handle("/api/logout", &logoutHandler{})
 
 	// Run the server on port :8080
-	http.ListenAndServe(":8080", mux)
+	log.Fatal(http.ListenAndServe(":8080", mux))
 }

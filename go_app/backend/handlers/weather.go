@@ -72,7 +72,7 @@ func GetCopenhagenWeather() (*WeatherResponse, error) {
 
 	var weather WeatherResponse
 	if err := json.NewDecoder(resp.Body).Decode(&weather); err != nil {
-		return nil, fmt.Errorf("Failed parsing JSON: %v", err)
+		return nil, fmt.Errorf("failed parsing JSON: %v", err)
 	}
 
 	return &weather, nil
