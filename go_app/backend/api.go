@@ -3,11 +3,11 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	_ "modernc.org/sqlite"
 	"net/http"
 	"strings"
-	_ "modernc.org/sqlite"
-  "whoknows_backend/structs"
 	"whoknows_backend/security"
+	"whoknows_backend/structs"
 )
 
 // GET /api/logout - Logout
@@ -188,16 +188,16 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Hash password
- hashedPassword, err := security.HashPassword(password)
- if err != nil {
+	hashedPassword, err := security.HashPassword(password)
+	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		_ = json.NewEncoder(w).Encode(map[string]interface{}{
 			"status_code": http.StatusInternalServerError,
 			"message":     "Could not hash password",
-	})
-	return
-}
+		})
+		return
+	}
 
 	// Puts data into database using prepared statement to avoid sql-injections
 	stmt, err := h.db.Prepare(`INSERT INTO users (username, email, password) VALUES (?, ?, ?)`)

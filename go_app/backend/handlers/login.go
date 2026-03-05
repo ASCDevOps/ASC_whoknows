@@ -1,13 +1,13 @@
 package handlers
 
 import (
-	"html/template"
 	"database/sql"
 	"encoding/json"
+	"html/template"
 	"net/http"
 	"strings"
-	"whoknows_backend/structs"
 	"whoknows_backend/security"
+	"whoknows_backend/structs"
 )
 
 type LoginHandler struct{}
