@@ -19,7 +19,10 @@ func (*LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = loginTemplate.Execute(w, nil)
+	if err := loginTemplate.Execute(w, nil); err != nil {
+    http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+    return
+	}
 }
 
 // POST /api/login
@@ -104,5 +107,13 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func writeJSON(w http.ResponseWriter, status int, payload any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	_ = json.NewEncoder(w).Encode(payload)
+
+	func writeJSON(w http.ResponseWriter, status int, payload any) {
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(status)
+
+    if err := json.NewEncoder(w).Encode(payload); err != nil {
+        http.Error(w, "encoding error", http.StatusInternalServerError)
+    	}
+	}
 }
