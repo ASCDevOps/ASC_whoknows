@@ -10,8 +10,11 @@ type BodyLoginAPILoginPost struct {
 	Password string `json:"password"`
 }
 
-// SKRIV HVILKET ENDPOINT DET BRUGES TIL HER
+// POST /api/register
 type BodyRegisterAPIRegisterPost struct {
+	Username string `json:"username"`
+	Email	 string `json:"email"`
+	Password string `json:"password"`
 }
 
 // Responses
@@ -46,6 +49,7 @@ type HTTPValidationError struct {
 	Detail []ValidationError `json:"detail"`
 }
 
-// SKRIV HVILKET ENDPOINT DET BRUGES TIL HER
+// 422 validation error - POST api/register
 type RequestValidationError struct {
+	Detail []ValidationError `json:"detail"`
 }
