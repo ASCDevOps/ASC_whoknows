@@ -105,10 +105,16 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // Helpers til POST /api/login
 func writeJSON(w http.ResponseWriter, status int, payload any) {
+	data, err := json.Marshal(payload)
+	if err != nil {
+		http.Error(w, "encoding error", http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 
-	if err := json.NewEncoder(w).Encode(payload); err != nil {
-		http.Error(w, "encoding error", http.StatusInternalServerError)
+	if _, err := w.Write(data); err != nil {
+		http.Error(w, "write response error", http.StatusInternalServerError)
 	}
 }
