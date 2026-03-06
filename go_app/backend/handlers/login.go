@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"database/sql"
-	"encoding/json"
+	
 	"html/template"
 	"net/http"
 	"strings"
@@ -104,15 +104,3 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // Helpers til POST /api/login
-
-func writeJSON(w http.ResponseWriter, status int, payload any) {
-	data, err := json.Marshal(payload)
-	if err != nil {
-		http.Error(w, "encoding error", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	w.Write(data)
-}
