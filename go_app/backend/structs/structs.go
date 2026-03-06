@@ -12,9 +12,10 @@ type BodyLoginAPILoginPost struct {
 
 // POST /api/register
 type BodyRegisterAPIRegisterPost struct {
-	Username string `json:"username"`
-	Email	 string `json:"email"`
-	Password string `json:"password"`
+	Username	string `json:"username"`
+	Email		string `json:"email"`
+	Password	string `json:"password"`
+	Password2	string `json:"password2"`
 }
 
 // Responses
@@ -28,6 +29,7 @@ type AuthResponse struct {
 type StandardResponse struct {
 	StatusCode *int    `json:"statusCode,omitempty"`
 	Message    *string `json:"message,omitempty"`
+	Data		interface{} `json:"data"`
 }
 
 // GET /api/search til 200 response
