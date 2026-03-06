@@ -115,6 +115,6 @@ func writeJSON(w http.ResponseWriter, status int, payload any) {
 	w.WriteHeader(status)
 
 	if _, err := w.Write(data); err != nil {
-		http.Error(w, "write response error", http.StatusInternalServerError)
+		return
 	}
 }
