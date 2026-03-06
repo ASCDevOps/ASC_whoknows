@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"database/sql"
 	"strings"
+
+	"whoknows_backend/structs"
 )
 
 type RegisterHandler struct{
@@ -30,28 +32,62 @@ func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	password := strings.TrimSpace(r.FormValue("password"))
 	password1 := strings.TrimSpace(r.FormValue("password1"))
 
-	if username == "" || email == "" || password == "" {
-		http.Error(w, "missing fields", http.StatusBadRequest)
+	if req.Username == "" || req.Email == "" || req.Password == "" {
+		msg := "Missing fields"
+		res := structs.AuthResponse{
+			StatusCode: intPtr(422),
+			Message:	&msg,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode(res)
 		return
 	}
 
-	if password != password1 {
-		http.Error(w, "Password do not match", http.StatusBadRequest)
+	if req.Password != req.Password1{
+		msg := "Passwords do not match!"
+		res := structs.AuthResponse{
+			StatusCode: intPtr(422),
+			Message:	&msg, 
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode(res)
 		return
-	}
+	} 
 
 	_, err = h.DB.Exec(
 		"INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
-		username, email, password,
+		req.Username, req.Email, req.Password,
 	)
 
 	if err != nil{
-		http.Error(w, "User creation failed!", http.StatusInternalServerError)
+		msg := "User creation failed!"
+		res := structs.AuthResponse{
+			statusCode: intPtr(500),
+			Message:	&msg,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(res)
 		return
+
+	msg := "User Registered"
+	res := structs.AuthResponse{
+		StatusCode: intPtr(200),
+		Message:	&msg,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(`{"statusCode":200,"message":"User registered"}`))
+	json.NewEncoder(w).Encode(res)
+
+	}
+
+func intPtr(i int) *int {
+	return &i
 }
 
 
