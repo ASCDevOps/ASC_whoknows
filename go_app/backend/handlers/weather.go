@@ -13,11 +13,14 @@ var weatherTemplate = template.Must(template.ParseFiles("templates/test.html"))
 
 func (*WeatherHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	_ = weatherTemplate.Execute(w, nil)
+	if err := weatherTemplate.Execute(w, nil); err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
 }
 
 type WeatherAPIHandler struct{}
@@ -28,7 +31,7 @@ type WeatherResponse struct {
 	GenerationTime float64 `json:"generationtime_ms"`
 	UTCOffsetSec   int     `json:"utc_offset_seconds"`
 	Timezone       string  `json:"timezone"`
-	CurrentWeather struct {
+	CurrentWeather  struct {
 		Temperature float64 `json:"temperature"`
 		WindSpeed   float64 `json:"windspeed"`
 		WindDir     float64 `json:"winddirection"`
@@ -37,42 +40,44 @@ type WeatherResponse struct {
 	} `json:"current_weather"`
 }
 
-// GET /api/weather - Location is set to Copenhagen right now.
+// GET /api/weather
 func (*WeatherAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	weather, err := GetCopenhagenWeather()
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Failed to fetch weather: %v", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("failed to fetch weather: %v", err), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+
 	if err := json.NewEncoder(w).Encode(weather); err != nil {
-		http.Error(w, fmt.Sprintf("Failed encoding JSON: %v", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("failed encoding json: %v", err), http.StatusInternalServerError)
 	}
 }
 
-// GetCopenhagenWeather GETS weatherdata from Open-Meteo API
+// GetCopenhagenWeather fetches weather data from Open-Meteo API
 func GetCopenhagenWeather() (*WeatherResponse, error) {
 	url := "https://api.open-meteo.com/v1/forecast?latitude=55.6761&longitude=12.5683&current_weather=true"
 
 	resp, err := http.Get(url)
 	if err != nil {
-		return nil, fmt.Errorf("API request failed: %v", err)
+		return nil, fmt.Errorf("api request failed: %v", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("API returned status %d", resp.StatusCode)
+		return nil, fmt.Errorf("api returned status %d", resp.StatusCode)
 	}
 
 	var weather WeatherResponse
+
 	if err := json.NewDecoder(resp.Body).Decode(&weather); err != nil {
-		return nil, fmt.Errorf("Failed parsing JSON: %v", err)
+		return nil, fmt.Errorf("failed parsing json: %v", err)
 	}
 
 	return &weather, nil
