@@ -5,8 +5,9 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
+	"whoknows_backend/structs"
+
 	_ "modernc.org/sqlite"
-  "whoknows_backend/structs"
 )
 
 // GET /api/logout - Logout

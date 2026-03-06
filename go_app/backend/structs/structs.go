@@ -23,7 +23,7 @@ type BodyRegisterAPIRegisterPost struct {
 
 // GET /api/logout
 type AuthResponse struct {
-	StatusCode *int   `json:"statusCode,omitempty"`
+	StatusCode *int    `json:"statusCode,omitempty"`
 	Message    *string `json:"message,omitempty"`
 }
 

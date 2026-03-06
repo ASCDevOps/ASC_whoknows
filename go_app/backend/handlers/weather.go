@@ -31,7 +31,7 @@ type WeatherResponse struct {
 	GenerationTime float64 `json:"generationtime_ms"`
 	UTCOffsetSec   int     `json:"utc_offset_seconds"`
 	Timezone       string  `json:"timezone"`
-	CurrentWeather  struct {
+	CurrentWeather struct {
 		Temperature float64 `json:"temperature"`
 		WindSpeed   float64 `json:"windspeed"`
 		WindDir     float64 `json:"winddirection"`
