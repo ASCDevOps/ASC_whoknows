@@ -20,9 +20,8 @@ func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := r.ParseForm()
-	if err != nil {
-		http.Error(w, "Invalid form", http.StatusBadRequest)
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "invalid form", http.StatusBadRequest)
 		return
 	}
 
@@ -33,64 +32,70 @@ func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Password2: strings.TrimSpace(r.FormValue("password2")),
 	}
 
+	// Validation
 	if req.Username == "" || req.Email == "" || req.Password == "" {
-		msg := "Missing fields"
+		msg := "missing fields"
 
-		res := structs.AuthResponse{
+		writeJSON(w, http.StatusUnprocessableEntity, structs.AuthResponse{
 			StatusCode: intPtr(422),
 			Message:    &msg,
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode(res)
+		})
 		return
 	}
 
 	if req.Password != req.Password2 {
-		msg := "Passwords do not match!"
+		msg := "passwords do not match"
 
-		res := structs.AuthResponse{
+		writeJSON(w, http.StatusUnprocessableEntity, structs.AuthResponse{
 			StatusCode: intPtr(422),
 			Message:    &msg,
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode(res)
+		})
 		return
 	}
 
-	_, err = h.DB.Exec(
+	if h.DB == nil {
+		msg := "database not configured"
+
+		writeJSON(w, http.StatusInternalServerError, structs.AuthResponse{
+			StatusCode: intPtr(500),
+			Message:    &msg,
+		})
+		return
+	}
+
+	_, err := h.DB.Exec(
 		"INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
 		req.Username, req.Email, req.Password,
 	)
 
 	if err != nil {
-		msg := "User creation failed!"
+		msg := "user creation failed"
 
-		res := structs.AuthResponse{
+		writeJSON(w, http.StatusInternalServerError, structs.AuthResponse{
 			StatusCode: intPtr(500),
 			Message:    &msg,
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(res)
+		})
 		return
 	}
 
-	msg := "User registered"
+	msg := "user registered"
 
-	res := structs.AuthResponse{
+	writeJSON(w, http.StatusOK, structs.AuthResponse{
 		StatusCode: intPtr(200),
 		Message:    &msg,
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(res)
+	})
 }
 
 func intPtr(i int) *int {
 	return &i
+}
+
+func writeJSON(w http.ResponseWriter, status int, payload any) {
+	w.Header().Set("Content-Type", "application/json")
+
+	w.WriteHeader(status)
+
+	if err := json.NewEncoder(w).Encode(payload); err != nil {
+		http.Error(w, "encoding error", http.StatusInternalServerError)
+	}
 }
