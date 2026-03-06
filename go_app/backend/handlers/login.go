@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"database/sql"
-	
 	"html/template"
 	"net/http"
 	"strings"
+
 	"whoknows_backend/structs"
 )
 
@@ -20,8 +20,8 @@ func (*LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := loginTemplate.Execute(w, nil); err != nil {
-    http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-    return
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
 	}
 }
 
@@ -52,7 +52,7 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	username := strings.TrimSpace(r.FormValue("username"))
 	password := strings.TrimSpace(r.FormValue("password"))
 
-	if strings.TrimSpace(username) == "" || strings.TrimSpace(password) == "" {
+	if username == "" || password == "" {
 		writeJSON(w, 422, structs.HTTPValidationError{
 			Detail: []structs.ValidationError{
 				{Loc: []any{"body", "username"}, Msg: "Field required", Type: "value_error.missing"},
@@ -65,11 +65,14 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if h.DB == nil {
 		status := 500
 		msg := "database not configured"
-		writeJSON(w, 500, structs.AuthResponse{StatusCode: &status, Message: &msg})
+
+		writeJSON(w, 500, structs.AuthResponse{
+			StatusCode: &status,
+			Message:    &msg,
+		})
 		return
 	}
 
-	// Slå bruger op (kun password er nødvendigt for login)
 	var dbPassword string
 	err := h.DB.QueryRow(
 		"SELECT password FROM users WHERE username = ?",
@@ -79,28 +82,41 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err == sql.ErrNoRows {
 		status := 401
 		msg := "invalid credentials"
-		writeJSON(w, 401, structs.AuthResponse{StatusCode: &status, Message: &msg})
+
+		writeJSON(w, 401, structs.AuthResponse{
+			StatusCode: &status,
+			Message:    &msg,
+		})
 		return
 	}
+
 	if err != nil {
 		status := 500
 		msg := "database error"
-		writeJSON(w, 500, structs.AuthResponse{StatusCode: &status, Message: &msg})
+
+		writeJSON(w, 500, structs.AuthResponse{
+			StatusCode: &status,
+			Message:    &msg,
+		})
 		return
 	}
 
-	// Password check (plaintext lige nu)
 	if dbPassword != password {
 		status := 401
 		msg := "invalid credentials"
-		writeJSON(w, 401, structs.AuthResponse{StatusCode: &status, Message: &msg})
+
+		writeJSON(w, 401, structs.AuthResponse{
+			StatusCode: &status,
+			Message:    &msg,
+		})
 		return
 	}
 
-	// Success
 	status := 200
 	msg := "logged in"
-	writeJSON(w, 200, structs.AuthResponse{StatusCode: &status, Message: &msg})
-}
 
-// Helpers til POST /api/login
+	writeJSON(w, 200, structs.AuthResponse{
+		StatusCode: &status,
+		Message:    &msg,
+	})
+}
