@@ -1,11 +1,10 @@
 package structs
 
-// JSON: matching names for json
-// omitempty = can be nil
+// json: matching names for json
+// omiempty = can be nil
 
 // Request Bodies
-
-// POST /api/login
+// Post /api/login
 type BodyLoginAPILoginPost struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
@@ -13,15 +12,14 @@ type BodyLoginAPILoginPost struct {
 
 // POST /api/register
 type BodyRegisterAPIRegisterPost struct {
-	Username  string `json:"username"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	Password2 string `json:"password2"`
+	Username	string `json:"username"`
+	Email		string `json:"email"`
+	Password	string `json:"password"`
+	Password2	string `json:"password2"`
 }
 
 // Responses
-
-// GET /api/logout
+// GET /api/logout,
 type AuthResponse struct {
 	StatusCode *int    `json:"statusCode,omitempty"`
 	Message    *string `json:"message,omitempty"`
@@ -29,9 +27,9 @@ type AuthResponse struct {
 
 // GET /api/search til 442 response
 type StandardResponse struct {
-	StatusCode *int        `json:"statusCode,omitempty"`
-	Message    *string     `json:"message,omitempty"`
-	Data       interface{} `json:"data"`
+	StatusCode *int    `json:"statusCode,omitempty"`
+	Message    *string `json:"message,omitempty"`
+	Data		interface{} `json:"data"`
 }
 
 // GET /api/search til 200 response
@@ -41,14 +39,14 @@ type SearchResponse struct {
 
 // Validation Errors
 
-// 422 validation Error - POST api/login
+// 422 validation Error - Post api/login
 type ValidationError struct {
 	Loc  []any  `json:"loc"` // (string | integer)
 	Msg  string `json:"msg"`
 	Type string `json:"type"`
 }
 
-// 422 validation Error wrapper - POST api/login
+// 422 validation Error wrapper . Post api/login
 type HTTPValidationError struct {
 	Detail []ValidationError `json:"detail"`
 }
