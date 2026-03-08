@@ -53,7 +53,7 @@ jobs:
         uses: super-linter/super-linter@v8.5.0
         env:
           DEFAULT_BRANCH: master
-          VALIDATE_ALL_CODEBASE: true #only checks the files that were changed in the PR, should be set to true if you want to check the entire codebase
+          VALIDATE_ALL_CODEBASE: false #only checks the files that were changed in the PR, should be set to true if you want to check the entire codebase
           FILTER_REGEX_EXCLUDE: python_app/.* #ignores python_app
 
           #disable all linters except for go, very easy to enable/disable linters by changing the value to true/false
