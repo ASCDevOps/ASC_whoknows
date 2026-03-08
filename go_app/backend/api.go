@@ -49,7 +49,6 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		lang = "en"
 	}
 
-	// q er required -> 422 hvis den mangler
 	if strings.TrimSpace(q) == "" {
 		status := 422
 		msg := "q is required"
@@ -115,9 +114,7 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := r.ParseForm(); err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		if err := json.NewEncoder(w).Encode(map[string]interface{}{
+		writeJSON(w, http.StatusUnprocessableEntity, map[string]interface{}{
 			"detail": []map[string]interface{}{
 				{
 					"loc":  []string{"body"},
@@ -125,9 +122,7 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					"type": "value_error",
 				},
 			},
-		}); err != nil {
-			http.Error(w, "failed to encode json", http.StatusInternalServerError)
-		}
+		})
 		return
 	}
 
@@ -136,71 +131,8 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("password")
 	password2 := r.FormValue("password2")
 
-	if username == "" {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		if err := json.NewEncoder(w).Encode(map[string]interface{}{
-			"detail": []map[string]interface{}{
-				{
-					"loc":  []string{"username"},
-					"msg":  "Field required",
-					"type": "value_error.missing",
-				},
-			},
-		}); err != nil {
-			http.Error(w, "failed to encode json", http.StatusInternalServerError)
-		}
-		return
-	}
-
-	if email == "" {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		if err := json.NewEncoder(w).Encode(map[string]interface{}{
-			"detail": []map[string]interface{}{
-				{
-					"loc":  []string{"email"},
-					"msg":  "Field required",
-					"type": "value_error.missing",
-				},
-			},
-		}); err != nil {
-			http.Error(w, "failed to encode json", http.StatusInternalServerError)
-		}
-		return
-	}
-
-	if password == "" {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		if err := json.NewEncoder(w).Encode(map[string]interface{}{
-			"detail": []map[string]interface{}{
-				{
-					"loc":  []string{"password"},
-					"msg":  "Field required",
-					"type": "value_error.missing",
-				},
-			},
-		}); err != nil {
-			http.Error(w, "failed to encode json", http.StatusInternalServerError)
-		}
-		return
-	}
-
-	if password2 != "" && password != password2 {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		if err := json.NewEncoder(w).Encode(map[string]interface{}{
-			"detail": []map[string]interface{}{
-				{
-					"loc":  []string{"password2"},
-					"msg":  "Passwords do not match",
-					"type": "value_error",
-				},
-			},
-		}); err != nil {
-			http.Error(w, "failed to encode json", http.StatusInternalServerError)
-		}
+	if validationErr := validateRegisterInput(username, email, password, password2); validationErr != nil {
+		writeJSON(w, http.StatusUnprocessableEntity, validationErr)
 		return
 	}
 
@@ -236,6 +168,58 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		"status_code": http.StatusOK,
 		"message":     "User registered successfully",
 	})
+}
+
+func validateRegisterInput(username, email, password, password2 string) map[string]interface{} {
+	if username == "" {
+		return map[string]interface{}{
+			"detail": []map[string]interface{}{
+				{
+					"loc":  []string{"username"},
+					"msg":  "Field required",
+					"type": "value_error.missing",
+				},
+			},
+		}
+	}
+
+	if email == "" {
+		return map[string]interface{}{
+			"detail": []map[string]interface{}{
+				{
+					"loc":  []string{"email"},
+					"msg":  "Field required",
+					"type": "value_error.missing",
+				},
+			},
+		}
+	}
+
+	if password == "" {
+		return map[string]interface{}{
+			"detail": []map[string]interface{}{
+				{
+					"loc":  []string{"password"},
+					"msg":  "Field required",
+					"type": "value_error.missing",
+				},
+			},
+		}
+	}
+
+	if password2 != "" && password != password2 {
+		return map[string]interface{}{
+			"detail": []map[string]interface{}{
+				{
+					"loc":  []string{"password2"},
+					"msg":  "Passwords do not match",
+					"type": "value_error",
+				},
+			},
+		}
+	}
+
+	return nil
 }
 
 // Hjælper
