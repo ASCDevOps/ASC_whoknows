@@ -68,7 +68,9 @@ func GetCopenhagenWeather() (*WeatherResponse, error) {
 	if err != nil {
 		return nil, fmt.Errorf("API request failed: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("API returned status %d", resp.StatusCode)
