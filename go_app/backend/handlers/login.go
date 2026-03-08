@@ -41,7 +41,7 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		writeJSON(w, 422, structs.HTTPValidationError{
 			Detail: []structs.ValidationError{
-				{Loc: []any{"body"},Msg: "Invalid request body", Type: "value_error"},
+				{Loc: []any{"body"}, Msg: "Invalid request body", Type: "value_error"},
 			},
 		})
 		return

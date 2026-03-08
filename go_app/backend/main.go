@@ -17,7 +17,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
 
 	// Take incoming requests and dispatch them to the matching handlers
 	mux := http.NewServeMux()
@@ -57,5 +56,10 @@ func main() {
 		IdleTimeout:  30 * time.Second,
 	}
 
-	log.Fatal(server.ListenAndServe())
+	if err := server.ListenAndServe(); err != nil {
+		if closeErr := db.Close(); closeErr != nil {
+			log.Printf("failed to close database: %v", closeErr)
+		}
+		log.Fatal(err)
+	}
 }
