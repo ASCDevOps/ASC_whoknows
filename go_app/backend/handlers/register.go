@@ -15,5 +15,8 @@ func (*RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = registerTemplate.Execute(w, nil)
+	if err := registerTemplate.Execute(w, nil); err != nil {
+		http.Error(w, "template render error", http.StatusInternalServerError)
+		return
+	}
 }

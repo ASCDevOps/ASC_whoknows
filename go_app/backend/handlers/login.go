@@ -20,7 +20,10 @@ func (*LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = loginTemplate.Execute(w, nil)
+	if err := loginTemplate.Execute(w, nil); err != nil {
+		http.Error(w, "template render error", http.StatusInternalServerError)
+		return
+	}
 }
 
 // POST /api/login
@@ -38,7 +41,7 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		writeJSON(w, 422, structs.HTTPValidationError{
 			Detail: []structs.ValidationError{
-				{Loc: []any{"body"}, Msg: "Invalid request body", Type: "value_error"},
+				{Loc: []any{"body"},Msg: "Invalid request body", Type: "value_error"},
 			},
 		})
 		return
@@ -101,5 +104,7 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func writeJSON(w http.ResponseWriter, status int, payload any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	_ = json.NewEncoder(w).Encode(payload)
+	if err := json.NewEncoder(w).Encode(payload); err != nil {
+		http.Error(w, "failed to encode json", http.StatusInternalServerError)
+	}
 }

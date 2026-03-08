@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
 	_ "modernc.org/sqlite"
 
@@ -11,7 +12,6 @@ import (
 )
 
 func main() {
-
 	// Database connection
 	db, err := database.InitDB()
 	if err != nil {
@@ -49,6 +49,13 @@ func main() {
 	// GET /api/logout - Logout
 	mux.Handle("/api/logout", &logoutHandler{})
 
-	// Run the server on port :8080
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	server := &http.Server{
+		Addr:         ":8080",
+		Handler:      mux,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  30 * time.Second,
+	}
+
+	log.Fatal(server.ListenAndServe())
 }

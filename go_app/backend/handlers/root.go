@@ -15,5 +15,8 @@ func (*RootHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = rootTemplate.Execute(w, nil)
+	if err := rootTemplate.Execute(w, nil); err != nil {
+		http.Error(w, "template render error", http.StatusInternalServerError)
+		return
+	}
 }

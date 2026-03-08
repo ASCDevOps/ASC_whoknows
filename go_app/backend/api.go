@@ -3,9 +3,11 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	_ "modernc.org/sqlite"
 	"net/http"
 	"strings"
+
+	_ "modernc.org/sqlite"
+
 	"whoknows_backend/security"
 	"whoknows_backend/structs"
 )
@@ -27,9 +29,7 @@ func (*logoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Message:    &message,
 	}
 
-	if err := json.NewEncoder(w).Encode(resp); err != nil {
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-}
+	writeJSON(w, http.StatusOK, resp)
 }
 
 // GET /api/search
@@ -53,7 +53,7 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if strings.TrimSpace(q) == "" {
 		status := 422
 		msg := "q is required"
-		writeJSON(w, 422, structs.StandardResponse{
+		writeJSON(w, http.StatusUnprocessableEntity, structs.StandardResponse{
 			StatusCode: &status,
 			Message:    &msg,
 		})
@@ -80,7 +80,8 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data := make([]map[string]any, 0)
 	for rows.Next() {
 		var title, url, language, content string
-		var lastUpdated any // kan være null
+		var lastUpdated any
+
 		if err := rows.Scan(&title, &url, &language, &lastUpdated, &content); err != nil {
 			continue
 		}
@@ -94,7 +95,12 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	writeJSON(w, 200, structs.SearchResponse{Data: data})
+	if err := rows.Err(); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, structs.SearchResponse{Data: data})
 }
 
 // POST /api/register
@@ -103,17 +109,15 @@ type registerHandlerAPI struct {
 }
 
 func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// Checks if method is POST
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
 
-	// Parses form,
 	if err := r.ParseForm(); err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode(map[string]interface{}{
+		if err := json.NewEncoder(w).Encode(map[string]interface{}{
 			"detail": []map[string]interface{}{
 				{
 					"loc":  []string{"body"},
@@ -121,21 +125,21 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					"type": "value_error",
 				},
 			},
-		})
+		}); err != nil {
+			http.Error(w, "failed to encode json", http.StatusInternalServerError)
+		}
 		return
 	}
 
-	// Gets form-data
 	username := r.FormValue("username")
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 	password2 := r.FormValue("password2")
 
-	// Validates form-data, checks for required, checks if passwords are matching
 	if username == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode(map[string]interface{}{
+		if err := json.NewEncoder(w).Encode(map[string]interface{}{
 			"detail": []map[string]interface{}{
 				{
 					"loc":  []string{"username"},
@@ -143,13 +147,16 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					"type": "value_error.missing",
 				},
 			},
-		})
+		}); err != nil {
+			http.Error(w, "failed to encode json", http.StatusInternalServerError)
+		}
 		return
 	}
+
 	if email == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode(map[string]interface{}{
+		if err := json.NewEncoder(w).Encode(map[string]interface{}{
 			"detail": []map[string]interface{}{
 				{
 					"loc":  []string{"email"},
@@ -157,13 +164,16 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					"type": "value_error.missing",
 				},
 			},
-		})
+		}); err != nil {
+			http.Error(w, "failed to encode json", http.StatusInternalServerError)
+		}
 		return
 	}
+
 	if password == "" {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode(map[string]interface{}{
+		if err := json.NewEncoder(w).Encode(map[string]interface{}{
 			"detail": []map[string]interface{}{
 				{
 					"loc":  []string{"password"},
@@ -171,13 +181,16 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					"type": "value_error.missing",
 				},
 			},
-		})
+		}); err != nil {
+			http.Error(w, "failed to encode json", http.StatusInternalServerError)
+		}
 		return
 	}
+
 	if password2 != "" && password != password2 {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode(map[string]interface{}{
+		if err := json.NewEncoder(w).Encode(map[string]interface{}{
 			"detail": []map[string]interface{}{
 				{
 					"loc":  []string{"password2"},
@@ -185,27 +198,24 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					"type": "value_error",
 				},
 			},
-		})
+		}); err != nil {
+			http.Error(w, "failed to encode json", http.StatusInternalServerError)
+		}
 		return
 	}
-	// Hash password
+
 	hashedPassword, err := security.HashPassword(password)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		_ = json.NewEncoder(w).Encode(map[string]interface{}{
+		writeJSON(w, http.StatusInternalServerError, map[string]interface{}{
 			"status_code": http.StatusInternalServerError,
 			"message":     "Could not hash password",
 		})
 		return
 	}
 
-	// Puts data into database using prepared statement to avoid sql-injections
 	stmt, err := h.db.Prepare(`INSERT INTO users (username, email, password) VALUES (?, ?, ?)`)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]interface{}{
+		writeJSON(w, http.StatusInternalServerError, map[string]interface{}{
 			"status_code": http.StatusInternalServerError,
 			"message":     "Database error",
 		})
@@ -213,22 +223,16 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	defer stmt.Close()
 
-	// error handling for UNIQUE (username & email) in SQL
 	_, err = stmt.Exec(username, email, hashedPassword)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusConflict)
-		json.NewEncoder(w).Encode(map[string]interface{}{
+		writeJSON(w, http.StatusConflict, map[string]interface{}{
 			"status_code": http.StatusConflict,
 			"message":     "Username or email already exists",
 		})
 		return
 	}
 
-	// Success response
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]interface{}{
+	writeJSON(w, http.StatusOK, map[string]interface{}{
 		"status_code": http.StatusOK,
 		"message":     "User registered successfully",
 	})
@@ -238,5 +242,7 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func writeJSON(w http.ResponseWriter, status int, payload any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	_ = json.NewEncoder(w).Encode(payload)
+	if err := json.NewEncoder(w).Encode(payload); err != nil {
+		http.Error(w, "failed to encode json", http.StatusInternalServerError)
+	}
 }
