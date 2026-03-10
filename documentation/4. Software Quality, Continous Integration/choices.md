@@ -55,4 +55,4 @@ Instead of the type's name we have earlier chosen to write the endpoint which us
 - With the new structure, we will have a "handlers" folder with a file for both serving html and the api endpoint. But categorized, so weather.go serves /weather and /api/weather.
 
 # 10-03-2026
-* Crontab crashed the aplication when updating. I think the cause is that it kills the app and maybe rebuilds but it does not reopen it. Therefore we have decided that crontab should not be deployed for now, since dockerization is comming up.
+* Crontab crashed the application when updating. I think the cause is that it kills the app and maybe rebuilds but it does not reopen it. Therefore we have decided that crontab should not be deployed for now, since dockerization is coming up.
