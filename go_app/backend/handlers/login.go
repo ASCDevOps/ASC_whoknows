@@ -19,7 +19,10 @@ func (*LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = loginTemplate.Execute(w, nil)
+	if err := loginTemplate.Execute(w, nil); err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 }
 
 // POST /api/login
@@ -33,17 +36,23 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var body structs.BodyLoginAPILoginPost
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+	if err := r.ParseForm(); err != nil {
 		writeJSON(w, 422, structs.HTTPValidationError{
 			Detail: []structs.ValidationError{
-				{Loc: []any{"body"}, Msg: "Invalid request body", Type: "value_error"},
+					{
+					Loc:  []any{"body"},
+					Msg:  "Invalid request body",
+					Type: "value_error",
+				},
 			},
 		})
 		return
 	}
 
-	if strings.TrimSpace(body.Username) == "" || strings.TrimSpace(body.Password) == "" {
+	username := strings.TrimSpace(r.FormValue("username"))
+	password := strings.TrimSpace(r.FormValue("password"))
+
+	if username == "" || password == "" {
 		writeJSON(w, 422, structs.HTTPValidationError{
 			Detail: []structs.ValidationError{
 				{Loc: []any{"body", "username"}, Msg: "Field required", Type: "value_error.missing"},
@@ -56,7 +65,11 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if h.DB == nil {
 		status := 500
 		msg := "database not configured"
-		writeJSON(w, 500, structs.AuthResponse{StatusCode: &status, Message: &msg})
+
+		writeJSON(w, 500, structs.AuthResponse{
+			StatusCode: &status,
+			Message:    &msg,
+		})
 		return
 	}
 
@@ -64,7 +77,7 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var dbPassword string
 	err := h.DB.QueryRow(
 		"SELECT password FROM users WHERE username = ?",
-		body.Username,
+		username,
 	).Scan(&dbPassword)
 
 	if err == sql.ErrNoRows {
@@ -84,7 +97,11 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if dbPassword != body.Password {
 		status := 401
 		msg := "invalid credentials"
-		writeJSON(w, 401, structs.AuthResponse{StatusCode: &status, Message: &msg})
+
+		writeJSON(w, 401, structs.AuthResponse{
+			StatusCode: &status,
+			Message:    &msg,
+		})
 		return
 	}
 
