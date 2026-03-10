@@ -50,17 +50,22 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := r.ParseForm(); err != nil {
-		writeJSON(w, 422, structs.HTTPValidationError{
-			Detail: []structs.ValidationError{
-				{
-					Loc:  []any{"body"},
-					Msg:  "Invalid request body",
-					Type: "value_error",
-				},
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(422)
+	if err := json.NewEncoder(w).Encode(structs.HTTPValidationError{
+		Detail: []structs.ValidationError{
+			{
+				Loc:  []any{"body"},
+				Msg:  "Invalid request body",
+				Type: "value_error",
 			},
-		})
+		},
+	}); err != nil {
+		http.Error(w, "Failed to encode JSON", http.StatusInternalServerError)
 		return
 	}
+	return
+}
 
 	username := strings.TrimSpace(r.FormValue("username"))
 	password := strings.TrimSpace(r.FormValue("password"))
