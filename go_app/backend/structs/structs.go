@@ -6,8 +6,8 @@ package structs
 // Request Bodies
 // Post /api/login
 type BodyLoginAPILoginPost struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username 	string `json:"username"`
+	Password 	string `json:"password"`
 }
 
 // POST /api/register
