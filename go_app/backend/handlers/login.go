@@ -31,14 +31,13 @@ type APILoginHandler struct {
 	DB *sql.DB
 }
 
-
 func writeJSON(w http.ResponseWriter, status int, payload any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 
 	err := json.NewEncoder(w).Encode(payload)
 	if err != nil {
-		http.Error(w, "Failed to encode JSON", http.StatusInternalServerError) 
+		http.Error(w, "Failed to encode JSON", http.StatusInternalServerError)
 		return
 	}
 }
@@ -50,22 +49,22 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := r.ParseForm(); err != nil {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(422)
-	if err := json.NewEncoder(w).Encode(structs.HTTPValidationError{
-		Detail: []structs.ValidationError{
-			{
-				Loc:  []any{"body"},
-				Msg:  "Invalid request body",
-				Type: "value_error",
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(422)
+		if err := json.NewEncoder(w).Encode(structs.HTTPValidationError{
+			Detail: []structs.ValidationError{
+				{
+					Loc:  []any{"body"},
+					Msg:  "Invalid request body",
+					Type: "value_error",
+				},
 			},
-		},
-	}); err != nil {
-		http.Error(w, "Failed to encode JSON", http.StatusInternalServerError)
+		}); err != nil {
+			http.Error(w, "Failed to encode JSON", http.StatusInternalServerError)
+			return
+		}
 		return
 	}
-	return
-}
 
 	username := strings.TrimSpace(r.FormValue("username"))
 	password := strings.TrimSpace(r.FormValue("password"))
