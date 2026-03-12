@@ -63,3 +63,4 @@ jobs:
         with:
           version: latest
           working-directory: go_app/backend
+          only-new-issues: true # Can be changed so it looks through all files
