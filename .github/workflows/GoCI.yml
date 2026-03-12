@@ -59,7 +59,7 @@ jobs:
           go-version-file: go_app/backend/go.mod
 
       - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@6008b81b81c690c046ffc3fd5bce896da715d5fd
+        uses: golangci/golangci-lint-action@1e7e51e771db61008b38414a730f564565cf7c20
         with:
           version: latest
           working-directory: go_app/backend
