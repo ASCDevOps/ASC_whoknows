@@ -17,7 +17,10 @@ func (*WeatherHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = weatherTemplate.Execute(w, nil)
+	if err := weatherTemplate.Execute(w, nil); err != nil {
+		http.Error(w, "template render error", http.StatusInternalServerError)
+		return
+	}
 }
 
 type WeatherAPIHandler struct{}
@@ -53,10 +56,11 @@ func (*WeatherAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(weather); err != nil {
 		http.Error(w, fmt.Sprintf("Failed encoding JSON: %v", err), http.StatusInternalServerError)
+		return
 	}
 }
 
-// GetCopenhagenWeather GETS weatherdata from Open-Meteo API
+// GetCopenhagenWeather gets weather data from Open-Meteo API.
 func GetCopenhagenWeather() (*WeatherResponse, error) {
 	url := "https://api.open-meteo.com/v1/forecast?latitude=55.6761&longitude=12.5683&current_weather=true"
 
@@ -64,7 +68,9 @@ func GetCopenhagenWeather() (*WeatherResponse, error) {
 	if err != nil {
 		return nil, fmt.Errorf("API request failed: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("API returned status %d", resp.StatusCode)
@@ -72,7 +78,7 @@ func GetCopenhagenWeather() (*WeatherResponse, error) {
 
 	var weather WeatherResponse
 	if err := json.NewDecoder(resp.Body).Decode(&weather); err != nil {
-		return nil, fmt.Errorf("Failed parsing JSON: %v", err)
+		return nil, fmt.Errorf("failed parsing JSON: %v", err)
 	}
 
 	return &weather, nil
