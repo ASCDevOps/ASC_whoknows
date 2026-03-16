@@ -57,3 +57,10 @@ Instead of the type's name we have earlier chosen to write the endpoint which us
 ## 02-03-2026
 - This project uses pre-commit hooks to automatically enforce basic code hygiene and Go formatting before each commit.
 - Lightweight checks (whitespace, YAML validation, gofmt) run locally, while full linting and testing are handled in CI.
+
+## 02-03-2026
+- This project uses pre-commit hooks to automatically enforce basic code hygiene and Go formatting before each commit.
+- Lightweight checks (whitespace, YAML validation, gofmt) run locally, while full linting and testing are handled in CI.
+
+# 10-03-2026
+- Crontab crashed the application when updating. I think the cause is that it kills the app and maybe rebuilds but it does not reopen it. Therefore we have decided that crontab should not be deployed for now, since dockerization is coming up.
