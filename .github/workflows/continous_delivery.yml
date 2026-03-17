@@ -8,7 +8,6 @@ on:
 env:
   CR_PAT: ${{ secrets.CR_PAT }}
   DOCKER_GITHUB_USERNAME: ${{ secrets.DOCKER_GITHUB_USERNAME }}
-  ENV_GREETING: ${{ secrets.ENV_GREETING }}
 
 jobs:
   build:
