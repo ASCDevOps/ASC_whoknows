@@ -1,11 +1,12 @@
 package handlers
 
 import (
-	"html/template"
 	"database/sql"
 	"encoding/json"
+	"html/template"
 	"net/http"
 	"strings"
+	"whoknows_backend/security"
 	"whoknows_backend/structs"
 )
 
@@ -19,7 +20,10 @@ func (*LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = loginTemplate.Execute(w, nil)
+	if err := loginTemplate.Execute(w, nil); err != nil {
+		http.Error(w, "template render error", http.StatusInternalServerError)
+		return
+	}
 }
 
 // POST /api/login
@@ -80,8 +84,10 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Password check (plaintext lige nu)
-	if dbPassword != body.Password {
+	// Password check using bcrypt
+	ok := security.CheckPasswordHash(dbPassword, body.Password)
+
+	if !ok {
 		status := 401
 		msg := "invalid credentials"
 		writeJSON(w, 401, structs.AuthResponse{StatusCode: &status, Message: &msg})
@@ -98,5 +104,7 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func writeJSON(w http.ResponseWriter, status int, payload any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	_ = json.NewEncoder(w).Encode(payload)
+	if err := json.NewEncoder(w).Encode(payload); err != nil {
+		http.Error(w, "failed to encode json", http.StatusInternalServerError)
+	}
 }
