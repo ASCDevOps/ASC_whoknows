@@ -5,10 +5,10 @@
 
 # 24-02-2026
 
-- Added Continous Intergration for automatic test, so we detect errors early, prevent merging conflicts and make sure tests are always executed.
+- Added Continuous Integration for automatic test, so we detect errors early, prevent merging conflicts and make sure tests are always executed.
 - I have chosen to stay at checkout/@v4 and setup-go/@v5 because they are more stable and less bugs compared to v6
-- We also cache dependencies to reduces build time, make the pipeline faster and more efficient and also so dependencies wont be fetched again on each run.
-- When it came to badge the default GitHub Actions badge only displays the status of our workflow, but to have more flexability for the future, we choose to go with https://shields.io.
+- We also cache dependencies to reduces build time, make the pipeline faster and more efficient and also so dependencies won't be fetched again on each run.
+- When it came to badge the default GitHub Actions badge only displays the status of our workflow, but to have more flexiability for the future, we choose to go with https://shields.io.
 
 ## DeepSource Issues
 
@@ -30,7 +30,7 @@ Instead of the type's name we have earlier chosen to write the endpoint which us
 
 **Conclusion: Do you agree with the findings?**
 
-- DeepSource has some uses, it found some possibilites of bugs, but it primarily cleaned up the code.
+- DeepSource has some uses, it found some possibilities of bugs, but it primarily cleaned up the code.
 - Some of its "issues" was kind of intrusive and shouldn't necessarily be "fixed"
 
 # 26-02-2026
@@ -53,3 +53,14 @@ Instead of the type's name we have earlier chosen to write the endpoint which us
 
 - We have talked about splitting the current folder-structure up into more folders.
 - With the new structure, we will have a "handlers" folder with a file for both serving html and the api endpoint. But categorized, so weather.go serves /weather and /api/weather.
+
+## 02-03-2026
+- This project uses pre-commit hooks to automatically enforce basic code hygiene and Go formatting before each commit.
+- Lightweight checks (whitespace, YAML validation, gofmt) run locally, while full linting and testing are handled in CI.
+
+## 02-03-2026
+- This project uses pre-commit hooks to automatically enforce basic code hygiene and Go formatting before each commit.
+- Lightweight checks (whitespace, YAML validation, gofmt) run locally, while full linting and testing are handled in CI.
+
+# 10-03-2026
+- Crontab crashed the application when updating. I think the cause is that it kills the app and maybe rebuilds but it does not reopen it. Therefore we have decided that crontab should not be deployed for now, since dockerization is coming up.
