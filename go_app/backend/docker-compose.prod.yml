@@ -1,6 +1,6 @@
 services:
   app:
-    image: ghcr.io/org/repo/app:latest
+    image: ghcr.io/ascdevops/asc_whoknows:latest
     env_file:
       - .env
     volumes:
