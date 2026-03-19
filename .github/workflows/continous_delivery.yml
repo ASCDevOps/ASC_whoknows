@@ -1,7 +1,7 @@
 name: Push to GHCR
 on:
   push:
-    branches: continous_delivery
+    branches: master
 
 env:
   REGISTRY: ghcr.io
