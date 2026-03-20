@@ -11,16 +11,20 @@ RUN go mod download
 COPY . .
 
 # Build binary
-RUN GOOS=linux GOARCH=amd64 go build -o app
+RUN go build -o app .
 
 
 # Runtime Stage
 FROM alpine:3.21
 
-WORKDIR /
+WORKDIR /app
+
+# make dir for sqlite
+RUN mkdir -p /app/data
 
 # Copy src from build
 COPY --from=builder /build/app .
+
 # Copy templates from build, so app can access them at runtime
 COPY --from=builder /build/templates ./templates
 

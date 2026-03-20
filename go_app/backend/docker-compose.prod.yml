@@ -1,0 +1,12 @@
+services:
+  app:
+    image: ghcr.io/ascdevops/asc_whoknows:latest
+    env_file:
+      - .env
+    volumes:
+      - sqlite-data:/app/data
+    ports:
+      - "8080:8080"
+  
+volumes:
+  sqlite-data:
