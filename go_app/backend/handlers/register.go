@@ -56,7 +56,7 @@ func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if h.DB == nil {
 		msg := "database not configured"
 
-		writeJSON(w, http.StatusInternalServerError, structs.AuthResponse{
+		writeRegisterJSON(w, http.StatusInternalServerError, structs.AuthResponse{
 			StatusCode: intPtr(500),
 			Message:    &msg,
 		})
@@ -71,7 +71,7 @@ func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		msg := "user creation failed"
 
-		writeJSON(w, http.StatusInternalServerError, structs.AuthResponse{
+		writeRegisterJSON(w, http.StatusInternalServerError, structs.AuthResponse{
 			StatusCode: intPtr(500),
 			Message:    &msg,
 		})
@@ -80,7 +80,7 @@ func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	msg := "user registered"
 
-	writeJSON(w, http.StatusOK, structs.AuthResponse{
+	writeRegisterJSON(w, http.StatusOK, structs.AuthResponse{
 		StatusCode: intPtr(200),
 		Message:    &msg,
 	})
@@ -90,7 +90,7 @@ func intPtr(i int) *int {
 	return &i
 }
 
-func writeJSON(w http.ResponseWriter, status int, payload any) {
+func writeRegisterJSON(w http.ResponseWriter, status int, payload any) {
 	w.Header().Set("Content-Type", "application/json")
 
 	w.WriteHeader(status)
