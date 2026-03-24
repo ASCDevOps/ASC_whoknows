@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"whoknows_backend/security"
 
 	// Import sqlite
 	_ "modernc.org/sqlite"
@@ -32,7 +33,7 @@ func InitDB() (*sql.DB, error) {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
 
-	schema := `	
+	schema := `
 		CREATE TABLE IF NOT EXISTS users (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			username TEXT NOT NULL UNIQUE,
@@ -87,12 +88,17 @@ func createAdminIfNil(db *sql.DB) error {
 		return nil
 	}
 
+	hashedPassword, err := security.HashPassword(adminPassword)
+if err != nil {
+	return fmt.Errorf("failed to hash admin password: %w", err)
+}
+
 	// Insert admin
 	_, err = db.Exec(
 		"INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
 		adminUsername,
 		adminEmail,
-		adminPassword,
+		hashedPassword,
 	)
 
 	if err != nil {
