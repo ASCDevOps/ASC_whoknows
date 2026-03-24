@@ -1,0 +1,19 @@
+name: Hadolint
+
+on:
+  pull_request:
+    paths:
+      - 'go_app/backend/Dockerfile'
+
+jobs:
+  hadolint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Run Hadolint on Dockerfile
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: go_app/backend/Dockerfile
