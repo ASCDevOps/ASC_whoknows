@@ -1,8 +1,8 @@
 # ¿Who Knows? - Flask application
 
-A search engine from 2009 built with the latest technology! Python 2.7 and Flask 0.5. 
+A search engine from 2009 built with the latest technology! Python 2.7 and Flask 0.5.
 
-**Note**: This application is intentionally full of problems and vulnerabilities. Do not run it in a production environment. 
+**Note**: This application is intentionally full of problems and vulnerabilities. Do not run it in a production environment.
 
 ## Installation
 
@@ -24,7 +24,7 @@ To initialize a new database:
 $ make init
 ```
 
-Note: Windows does not natively support Make. 
+Note: Windows does not natively support Make.
 
 
 ## Running the application
