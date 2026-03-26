@@ -21,7 +21,7 @@ app = Flask(__name__)
 app.secret_key = SECRET_KEY
 
 
-################################################################################ 
+################################################################################
 # Database Functions
 ################################################################################
 
@@ -176,7 +176,7 @@ def api_register():
     elif get_user_id(request.form['username']) is not None:
         error = 'The username is already taken'
     else:
-        g.db.execute("INSERT INTO users (username, email, password) values ('%s', '%s', '%s')" % 
+        g.db.execute("INSERT INTO users (username, email, password) values ('%s', '%s', '%s')" %
                      (request.form['username'], request.form['email'], hash_password(request.form['password'])))
         g.db.commit()
         flash('You were successfully registered and can login now')

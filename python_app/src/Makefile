@@ -6,6 +6,5 @@ init:
 run:
 	python2 ./backend/app.py
 
-test: 
+test:
 	PYTHONPATH=backend python2 ./backend/app_tests.py
-

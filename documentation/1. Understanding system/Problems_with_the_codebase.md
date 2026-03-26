@@ -12,18 +12,18 @@
 ## Styling
 * The issues that may arise typically stem from not respecting the existing legacy code and its associated structure and styling.
 
-* If too many changes are made, it can lead to more problems than necessary, both functionally and visually. 
+* If too many changes are made, it can lead to more problems than necessary, both functionally and visually.
 
 * Apart from that, there are no major errors, but mainly minor bugs that may occur due to the way the legacy code is structured.
 
 ## Critical Problems
 1. SQL injection
     - build with string
-2. Unsafe password hashing 
+2. Unsafe password hashing
     - not compadebel with moden systems
 3. Hardcoded secret key
     - the application uses a fixed secret key for session management.
-4. Application can terminate abruptly 
+4. Application can terminate abruptly
     - If the database is missing, the server terminates instead of handling the error gracefully
 5. Error handling is exposed directly
     - Potential errors may result in unhandled exceptions and exposed stack traces.
