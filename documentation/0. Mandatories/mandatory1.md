@@ -14,7 +14,7 @@ Made in .yml which is originally used by Swagger 2.0 but is still supported by O
 
 ## Github Flow
 **Workflow:**
-1. Create **Feature Branches** from default branch. 
+1. Create **Feature Branches** from default branch.
 2. Push commits to the **feature branch**.
 3. Open a **pull request** for team and AI code reviews.
 4. Once approved, merge into ``` main ```
