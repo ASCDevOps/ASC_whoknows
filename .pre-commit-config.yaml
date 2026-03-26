@@ -23,5 +23,8 @@ repos:
   - repo: https://github.com/golangci/golangci-lint
     rev: v2.10.1
     hooks:
-      - id: golangci-lint
-        args: ["--fix"]
+    - id: golangci-lint
+      args: ["--fix"]
+      files: ^go_app/backend/.*\.go$
+      pass_filenames: false
+      entry: bash -lc 'cd go_app/backend && golangci-lint run --fix ./...'
