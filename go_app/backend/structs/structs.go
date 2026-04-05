@@ -21,8 +21,9 @@ type BodyRegisterAPIRegisterPost struct {
 // Responses
 // GET /api/logout,
 type AuthResponse struct {
-	StatusCode *int    `json:"statusCode,omitempty"`
-	Message    *string `json:"message,omitempty"`
+	StatusCode             *int    `json:"statusCode,omitempty"`
+	Message                *string `json:"message,omitempty"`
+	RequiresPasswordChange *bool   `json:"requiresPasswordChange,omitempty"`
 }
 
 // GET /api/search til 442 response
@@ -35,6 +36,13 @@ type StandardResponse struct {
 // GET /api/search til 200 response
 type SearchResponse struct {
 	Data []map[string]any `json:"data"`
+}
+
+// Change password
+type BodyChangePassword struct {
+	Username        string `json:"username"`
+	NewPassword     string `json:"new_password"`
+	ConfirmPassword string `json:"confirm_password"`
 }
 
 // Validation Errors

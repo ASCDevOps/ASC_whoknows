@@ -63,10 +63,11 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Slå bruger op (kun password er nødvendigt for login)
 	var dbPassword string
+	var mustChangePassword int
 	err := h.DB.QueryRow(
-		"SELECT password FROM users WHERE username = ?",
+		"SELECT password, must_change_password FROM users WHERE username = ?",
 		body.Username,
-	).Scan(&dbPassword)
+	).Scan(&dbPassword, &mustChangePassword)
 
 	if err == sql.ErrNoRows {
 		status := 401
@@ -83,16 +84,60 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Password check (HashingPassword)
 	if err := security.CheckPassword(body.Password, dbPassword); err != nil {
-		status := 401
-		msg := "invalid credentials"
-		writeJSON(w, 401, structs.AuthResponse{StatusCode: &status, Message: &msg})
-		return
-	}
+		// Fallback for gamle plaintext-passwords
+		if dbPassword == body.Password {
+			hashedPassword, hashErr := security.HashPassword(body.Password)
+			if hashErr != nil {
+				status := 500
+				msg := "failed to upgrade password"
+				writeJSON(w, 500, structs.AuthResponse{
+					StatusCode: &status,
+					Message:    &msg,
+				})
+				return
+			}
 
-	// Success
+			_, updateErr := h.DB.Exec(
+				"UPDATE users SET password = ?, must_change_password = 1 WHERE username = ?",
+				hashedPassword,
+				body.Username,
+			)
+			if updateErr != nil {
+				status := 500
+				msg := "failed to upgrade password"
+				writeJSON(w, 500, structs.AuthResponse{
+					StatusCode: &status,
+					Message:    &msg,
+				})
+				return
+			}
+
+			mustChangePassword = 1
+		} else {
+			status := 401
+			msg := "invalid credentials"
+			writeJSON(w, 401, structs.AuthResponse{
+				StatusCode: &status,
+				Message:    &msg,
+			})
+			return
+		}
+	}
 	status := 200
 	msg := "logged in"
-	writeJSON(w, 200, structs.AuthResponse{StatusCode: &status, Message: &msg})
+	requiresPasswordChange := false
+
+	if mustChangePassword == 1 {
+		msg = "password change required"
+		requiresPasswordChange = true
+	}
+
+	writeJSON(w, 200, structs.AuthResponse{
+		StatusCode:             &status,
+		Message:                &msg,
+		RequiresPasswordChange: &requiresPasswordChange,
+	})
+
 }
 
 // Helpers til POST /api/login
