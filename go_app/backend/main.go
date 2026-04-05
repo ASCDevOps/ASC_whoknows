@@ -22,6 +22,9 @@ func main() {
 	// Take incoming requests and dispatch them to the matching handlers
 	mux := http.NewServeMux()
 
+	// Change Password
+	mux.Handle("/api/change-password", &handlers.ChangePasswordHandler{DB: db})
+
 	// GET / - Serve Root Page
 	mux.Handle("/", &handlers.RootHandler{})
 
