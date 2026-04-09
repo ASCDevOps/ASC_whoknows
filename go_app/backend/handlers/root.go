@@ -7,7 +7,7 @@ import (
 
 type RootHandler struct{}
 
-var rootTemplate = template.Must(template.ParseFiles("templates/test.html"))
+var rootTemplate = template.Must(template.ParseFiles("templates/layout.html"))
 
 func (*RootHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
@@ -15,5 +15,9 @@ func (*RootHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = rootTemplate.Execute(w, nil)
+	err := rootTemplate.ExecuteTemplate(w, "layout", nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
 }
