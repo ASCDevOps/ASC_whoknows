@@ -2,10 +2,11 @@ name: Push to GHCR
 
 on:
   workflow_run:
-  workflow_dispatch:
     workflows: ["Go CI"]
     types:
       - completed
+  workflow_dispatch:
+
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
