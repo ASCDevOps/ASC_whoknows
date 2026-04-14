@@ -2,6 +2,7 @@ name: Deployment
 
 on:
   workflow_run:
+  workflow_dispatch:
     workflows: ["Push to GHCR"]
     types:
       - completed

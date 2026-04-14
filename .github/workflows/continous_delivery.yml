@@ -1,8 +1,11 @@
 name: Push to GHCR
-on:
-  push:
-    branches: master
 
+on:
+  workflow_run:
+  workflow_dispatch:
+    workflows: ["Go CI"]
+    types:
+      - completed
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
