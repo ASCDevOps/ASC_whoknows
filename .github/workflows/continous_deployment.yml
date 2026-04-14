@@ -1,0 +1,59 @@
+name: Deployment
+
+on:
+  workflow_run:
+    workflows: ["Push to GHCR"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Add SSH key to runner
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/ssh_key
+          chmod 600 ~/.ssh/ssh_key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Create .env file
+        run: |
+          cat <<EOF > .env
+          ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }}
+          ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}
+          ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
+          DB_PATH=${{ secrets.DB_PATH }}
+          EOF
+
+      - name: Transfer .env file to server
+        run: |
+          scp -i ~/.ssh/ssh_key -o StrictHostKeyChecking=no .env \
+            $SSH_USER@$SSH_HOST:compose/.env
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+
+      - name: Transfer docker compose file
+        run: |
+          scp -i ~/.ssh/ssh_key -o StrictHostKeyChecking=no \
+            docker-compose.prod.yml \
+            $SSH_USER@$SSH_HOST:compose/docker-compose.prod.yml
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+
+      - name: Deploy on server
+        run: |
+          ssh -i ~/.ssh/ssh_key -o StrictHostKeyChecking=no \
+            $SSH_USER@$SSH_HOST << 'EOF'
+              cd compose
+              docker compose -f docker-compose.prod.yml pull
+              docker compose -f docker-compose.prod.yml up -d
+          EOF
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
