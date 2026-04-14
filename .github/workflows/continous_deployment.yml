@@ -45,7 +45,7 @@ jobs:
       - name: Transfer docker compose file
         run: |
           scp -i ~/.ssh/ssh_key -o StrictHostKeyChecking=no \
-            docker-compose.prod.yml \
+            go_app/backend/docker-compose.prod.yml \
             $SSH_USER@$SSH_HOST:compose/docker-compose.prod.yml
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
