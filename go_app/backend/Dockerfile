@@ -22,8 +22,6 @@ WORKDIR /app
 # make dir for sqlite
 RUN mkdir -p /app/data
 
-RUN apk upgrade --no-cache
-
 # Copy src from build
 COPY --from=builder /build/app .
 
