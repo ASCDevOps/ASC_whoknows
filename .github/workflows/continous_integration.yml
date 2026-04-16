@@ -66,3 +66,25 @@ jobs:
           version: latest
           working-directory: go_app/backend
           only-new-issues: true # Can be changed so it looks through all files
+
+  trivy:
+    name: Security Scan (Trivy)
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: go_app/backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Build image
+        run: docker build -t whoknows-backend .
+
+      - name: Run Trivy scan
+        uses: aquasecurity/trivy-action@6fb20c8edd70745d6b34bff0387b53b03c8a760a # v0.69.3
+        with:
+          image-ref: whoknows-backend
+          severity: HIGH,CRITICAL
+          exit-code: 1
