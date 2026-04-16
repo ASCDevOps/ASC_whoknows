@@ -22,6 +22,8 @@ Domain = free, but around 100kr.
 
 ```SELECT COUNT(*) FROM users where must_change_password = 0;```
 
+* 16-04-2026 = 465
+
 ### [Optional] Average amount of searches per day
 
 5. På simulationen kan vi se hvor mange searches der er på specifikke endpoints hver uge.
