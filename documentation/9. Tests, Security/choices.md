@@ -14,3 +14,13 @@
 
 * Additionally added Trivy to the CI pipeline.
 * Trivy found several vulnerabilities in our Dockerfile
+
+* I also ran Mozilla Observatory.
+* I discussed with an LLM, as many of these concepts i had never heard about before. For production-grade with public api, these should all be fixed at some point"🚀".
+
+![alt text](image.png)
+![alt text](image-1.png)
+
+* I also ran Lynis on our VM, it comes with a lot of suggestions (48). Nothing Critical though.
+
+![For fun](image-2.png)
