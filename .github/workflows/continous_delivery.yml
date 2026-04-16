@@ -2,10 +2,9 @@ name: Push to GHCR
 
 on:
   workflow_run:
-    workflows: ["Go CI"]
+    workflows: ["Continous Integration"]
     types:
       - completed
-  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -13,7 +12,13 @@ env:
 
 jobs:
   build-and-push:
+    if: >
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'master' &&
+      github.event.workflow_run.conclusion == 'success'
+
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       packages: write
