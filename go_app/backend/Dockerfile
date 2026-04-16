@@ -15,7 +15,7 @@ RUN go build -o app .
 
 
 # Runtime Stage
-FROM alpine:3.21
+FROM alpine:3.23
 
 WORKDIR /app
 
