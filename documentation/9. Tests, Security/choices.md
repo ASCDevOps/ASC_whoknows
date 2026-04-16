@@ -20,3 +20,7 @@
 
 ![alt text](image.png)
 ![alt text](image-1.png)
+
+* I also ran Lynis on our VM, it comes with a lot of suggestions (48). Nothing Critical though.
+
+![For fun](image-2.png)
