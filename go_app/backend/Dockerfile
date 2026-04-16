@@ -1,5 +1,5 @@
 # Build Stage
-FROM golang:1.25.7-alpine AS builder
+FROM golang:1.26.2-alpine AS builder
 
 WORKDIR /build
 
@@ -15,7 +15,7 @@ RUN go build -o app .
 
 
 # Runtime Stage
-FROM alpine:3.21
+FROM alpine:3.23
 
 WORKDIR /app
 
