@@ -13,3 +13,4 @@
 * Additionally, we complement this with OWASP ZAP, since our project is a web service, and ZAP tests the running application from the outside.
 
 * Additionally added Trivy to the CI pipeline.
+* Trivy found several vulnerabilities in our Dockerfile

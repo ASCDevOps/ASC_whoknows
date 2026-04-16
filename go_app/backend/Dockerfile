@@ -1,5 +1,5 @@
 # Build Stage
-FROM golang:1.25.7-alpine AS builder
+FROM golang:1.26.2-alpine AS builder
 
 WORKDIR /build
 
@@ -21,6 +21,8 @@ WORKDIR /app
 
 # make dir for sqlite
 RUN mkdir -p /app/data
+
+RUN apk upgrade --no-cache
 
 # Copy src from build
 COPY --from=builder /build/app .
