@@ -13,7 +13,6 @@ var rootTemplate = template.Must(template.ParseFiles(
 	"templates/login.html",
 	"templates/register.html",
 	"templates/search.html",
-
 ))
 
 func (*RootHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
