@@ -52,6 +52,9 @@ func main() {
 	// GET /api/logout - Logout
 	mux.Handle("/api/logout", &logoutHandler{})
 
+	// Serve static
+	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
 	// Run the server on port :8080
 	http.ListenAndServe(":8080", mux)
 }
