@@ -65,11 +65,13 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rows, err := h.DB.Query(
-		`SELECT title, url, language, last_updated, content
-		 FROM pages
-		 WHERE language = ? AND content LIKE ?`,
-		lang, "%"+q+"%",
-	)
+	`SELECT p.title, p.url, p.language, p.last_updated, p.content
+	 FROM pages_fts
+	 JOIN pages p ON p.rowid = pages_fts.rowid
+	 WHERE pages_fts MATCH ?
+	   AND p.language = ?`,
+	q, lang,
+)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

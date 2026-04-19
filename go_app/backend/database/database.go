@@ -16,25 +16,22 @@ import (
 func InitDB() (*sql.DB, error) {
 
 	// Load .env file
-	// Ignoring error on purpose, for production purposes.
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found")
 	}
 
 	dbPath := os.Getenv("DB_PATH")
 	if dbPath == "" {
-		// fallback
 		dbPath = "whoknows.db"
 	}
 
-	// Opens whoknows.db if null creates whoknows.db
 	db, err := sql.Open("sqlite", dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
 
 	schema := `
-		CREATE TABLE IF NOT EXISTS users (
+	CREATE TABLE IF NOT EXISTS users (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		username TEXT NOT NULL UNIQUE,
 		email TEXT NOT NULL UNIQUE,
@@ -42,15 +39,50 @@ func InitDB() (*sql.DB, error) {
 		must_change_password INTEGER NOT NULL DEFAULT 0
 	);
 
-		CREATE TABLE IF NOT EXISTS pages (
-			title TEXT PRIMARY KEY UNIQUE,
-			url TEXT NOT NULL UNIQUE,
-			language TEXT NOT NULL CHECK(language IN ('en', 'da')) DEFAULT 'en',
-			last_updated TIMESTAMP,
-			content TEXT NOT NULL
-		);`
+	CREATE TABLE IF NOT EXISTS pages (
+		title TEXT PRIMARY KEY UNIQUE,
+		url TEXT NOT NULL UNIQUE,
+		language TEXT NOT NULL CHECK(language IN ('en', 'da')) DEFAULT 'en',
+		last_updated TIMESTAMP,
+		content TEXT NOT NULL
+	);
+
+	-- FTS5 virtual table til hurtigere søgning i title og content
+	CREATE VIRTUAL TABLE IF NOT EXISTS pages_fts USING fts5(
+		title,
+		content,
+		language,
+		content='pages',
+		content_rowid='rowid'
+	);
+
+	-- Holder pages_fts opdateret når pages ændrer sig
+	CREATE TRIGGER IF NOT EXISTS pages_ai AFTER INSERT ON pages BEGIN
+		INSERT INTO pages_fts(rowid, title, content, language)
+		VALUES (new.rowid, new.title, new.content, new.language);
+	END;
+
+	CREATE TRIGGER IF NOT EXISTS pages_ad AFTER DELETE ON pages BEGIN
+		INSERT INTO pages_fts(pages_fts, rowid, title, content, language)
+		VALUES('delete', old.rowid, old.title, old.content, old.language);
+	END;
+
+	CREATE TRIGGER IF NOT EXISTS pages_au AFTER UPDATE ON pages BEGIN
+		INSERT INTO pages_fts(pages_fts, rowid, title, content, language)
+		VALUES('delete', old.rowid, old.title, old.content, old.language);
+
+		INSERT INTO pages_fts(rowid, title, content, language)
+		VALUES (new.rowid, new.title, new.content, new.language);
+	END;
+	`
 
 	_, err = db.Exec(schema)
+	if err != nil {
+		return nil, err
+	}
+
+	// Fylder pages_fts med eksisterende data fra pages
+	_, err = db.Exec(`INSERT INTO pages_fts(pages_fts) VALUES('rebuild');`)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +95,6 @@ func InitDB() (*sql.DB, error) {
 	fmt.Println("SQLite connected!")
 
 	return db, nil
-
 }
 
 func createAdminIfNil(db *sql.DB) error {
