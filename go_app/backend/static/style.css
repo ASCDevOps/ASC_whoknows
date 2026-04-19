@@ -1,81 +1,122 @@
-/* Website Defaults */
+/* ===== Base ===== */
 body {
     font-family: 'Trebuchet MS', sans-serif;
     font-size: 14px;
+    margin: 0;
+    background-color: #fafafa;
 }
 
-div.page div.body {
-    padding: 10px;
+/* ===== Layout ===== */
+.page {
+    max-width: 900px;
+    margin: 0 auto;
 }
 
-div.page div.footer {
+.page .body {
+    padding: 16px;
+}
+
+.page .footer {
     background: #eee;
     color: #888;
-    padding: 5px 10px;
+    padding: 10px 16px;
     font-size: 12px;
+    display: flex;
+    justify-content: space-between;
 }
 
+/* ===== Navigation ===== */
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+}
 
-ul.flashes {
+nav h1 {
+    margin: 0;
+}
+
+nav a {
+    text-decoration: none;
+    color: inherit;
+    margin-left: 16px;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+}
+
+/* ===== Flash Messages ===== */
+.flashes {
     list-style: none;
-    margin: 10px 10px 0 10px;
+    margin: 10px;
     padding: 0;
 }
 
-ul.flashes li {
+.flashes li {
     background: #B9F3ED;
     border: 1px solid #81CEC6;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    padding: 4px;
+    border-radius: 4px;
+    padding: 6px;
     font-size: 13px;
 }
 
-div.error {
-    margin: 10px 0;
+/* ===== Error Box ===== */
+.error {
+    margin: 10px;
     background: #FAE4E4;
     border: 1px solid #DD6F6F;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    padding: 4px;
+    border-radius: 4px;
+    padding: 6px;
     font-size: 13px;
 }
 
-
-/* Custom Styles */
-nav {
-    white-space: nowrap;
-    text-align: center;
-}
-
-nav h1, nav a {
-    display: inline-block;
-    margin-right: 20px;
-}
-
-#nav-login, #nav-register, #nav-logout {
-    float: right;
-}
-
+/* ===== Form Elements ===== */
 input {
-    width: 85%;
+    width: 80%;
     padding: 10px;
-    margin: 10px;
+    margin: 10px 10px 10px 0;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 6px;
+    font-size: 14px;
 }
 
 button {
-    width: 10%;
+    width: 15%;
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 6px;
     background-color: #f0f0f0;
     cursor: pointer;
-    margin-left: 10px;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+    background-color: #e8e8e8;
 }
 
 button:active {
     background-color: #e0e0e0;
-    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== Search Results ===== */
+#results {
+    margin-top: 20px;
+}
+
+.search-result-title {
+    text-decoration: none;
+    color: #1a0dab;
+}
+
+.search-result-title:hover {
+    text-decoration: underline;
+}
+
+.search-result-description {
+    color: #444;
+    margin-top: 4px;
 }
