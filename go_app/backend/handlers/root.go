@@ -9,7 +9,11 @@ type RootHandler struct{}
 
 var rootTemplate = template.Must(template.ParseFiles(
 	"templates/layout.html",
+	"templates/about.html",
+	"templates/login.html",
+	"templates/register.html",
 	"templates/search.html",
+
 ))
 
 func (*RootHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {

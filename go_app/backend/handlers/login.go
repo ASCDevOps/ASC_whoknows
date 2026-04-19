@@ -12,7 +12,7 @@ import (
 
 type LoginHandler struct{}
 
-var loginTemplate = template.Must(template.ParseFiles("templates/test.html"))
+var loginTemplate = template.Must(template.ParseFiles("templates/layout.html", "templates/login.html"))
 
 func (*LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
@@ -20,7 +20,7 @@ func (*LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = loginTemplate.Execute(w, nil)
+	_ = loginTemplate.ExecuteTemplate(w, "layout", nil)
 }
 
 // POST /api/login

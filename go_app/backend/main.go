@@ -37,6 +37,9 @@ func main() {
 	// GET /weather - Serve Weather Page
 	mux.Handle("/weather", &handlers.WeatherHandler{})
 
+	// GET /about - Serve about page
+	mux.Handle("/about", &handlers.AboutHandler{})
+
 	// GET /api/weather - Weather
 	mux.Handle("/api/weather", &handlers.WeatherAPIHandler{})
 
