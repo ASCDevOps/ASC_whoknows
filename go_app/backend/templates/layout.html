@@ -1,19 +1,26 @@
 {{ define "layout" }}
 <!doctype html>
-<title>¿Who Knows?</title>
-<link rel="stylesheet" type="text/css" href="../static/style.css">
-<link rel="icon" type="image/png" href="../static/monkgroup.png">
+<html>
+<head>
+  <title>¿Who Knows?</title>
+  <link rel="stylesheet" type="text/css" href="/static/style.css">
+  <link rel="icon" type="image/png" href="/static/monkgroup.png">
+</head>
+<body>
 <div class="page">
   <div class="navigation">
-  <nav>
-    <h1><a id="nav-logo" href="/search">¿Who Knows?</a></h1>
+<nav>
+  <h1><a id="nav-logo" href="/search">¿Who Knows?</a></h1>
+
+  <div class="nav-right">
     {{ if .User }}
-    <a id="nav-logout" href="/logout"></a>
+      <a id="nav-logout" href="/logout">Log out</a>
     {{ else }}
-    <a id="nav-login" href="/login">Log in</a>
-    <a id="nav-register" href="/register">Register</a>
+      <a id="nav-login" href="/login">Log in</a>
+      <a id="nav-register" href="/register">Register</a>
     {{ end }}
-  </nav>
+  </div>
+</nav>
   </div>
  {{ if .Flash }}
   <ul class="flashes">
@@ -21,11 +28,14 @@
   </ul>
 {{ end }}
   <div class="body">
+    {{ template "body" . }}
   </div>
-  
+
   <div class="footer">
     <span>¿Who Knows? &copy; 2009</span>
     <a href="/about">About</a>
   </div>
 </div>
+</body>
+</html>
 {{ end }}
