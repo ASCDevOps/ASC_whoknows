@@ -3,19 +3,26 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"html/template"
 	"net/http"
 	"strings"
-
 	"whoknows_backend/structs"
 )
+
+var registerTemplate = template.Must(template.ParseFiles("templates/layout.html", "templates/register.html"))
 
 type RegisterHandler struct {
 	DB *sql.DB
 }
 
 func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-
-	if r.Method != http.MethodPost {
+	switch r.Method {
+	case http.MethodGet:
+		_ = registerTemplate.ExecuteTemplate(w, "layout", nil)
+		return
+	case http.MethodPost:
+		// nothing here, falls through to your existing logic below
+	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}

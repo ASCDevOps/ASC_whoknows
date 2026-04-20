@@ -37,6 +37,9 @@ func main() {
 	// GET /weather - Serve Weather Page
 	mux.Handle("/weather", &handlers.WeatherHandler{})
 
+	// GET /about - Serve about page
+	mux.Handle("/about", &handlers.AboutHandler{})
+
 	// GET /api/weather - Weather
 	mux.Handle("/api/weather", &handlers.WeatherAPIHandler{})
 
@@ -50,7 +53,10 @@ func main() {
 	mux.Handle("/api/login", &handlers.APILoginHandler{DB: db})
 
 	// GET /api/logout - Logout
-	mux.Handle("/api/logout", &logoutHandler{})
+	mux.Handle("/api/logout", &handlers.LogoutHandler{})
+
+	// Serve static
+	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	// Run the server on port :8080
 	http.ListenAndServe(":8080", mux)

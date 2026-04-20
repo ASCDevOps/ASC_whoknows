@@ -1,19 +1,20 @@
-{% extends "layout.html" %}
-{% block title %}
-{% endblock %}
-{% block body %}
+{{ define  "body" }}
 <div>
-  <input id="search-input" placeholder="Search..." value="{{ request.args.get('q', '') }}"/>
+  <input id="search-input" placeholder="Search..." value="{{ .Query }}"/>
   <button id="search-button" onclick="makeSearchRequest()">Search</button>
 </div>
 
 <div id="results">
-  {% for result in search_results %}
+  {{ range .SearchResults }}
   <div>
-      <h2><a class="search-result-title" href="{{ result.url }}">{{ result.title }}</a></h2>
-      <p class="search-result-description">{{ result.description }}</p>
+      <h2>
+        <a class="search-result-title" href="{{ .URL }}">
+        {{ .Title }}
+      </a>
+    </h2>
+      <p class="search-result-description">{{ .Description }}</p>
   </div>
-  {% endfor %}
+  {{ end }}
 </div>
 
 <script>
@@ -40,4 +41,4 @@
     window.location.href = url.toString();
   }
 </script>
-{% endblock %}
+{{ end }}
