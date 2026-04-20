@@ -44,7 +44,6 @@ jobs:
   golangci:
     name: Lint
     runs-on: ubuntu-latest
-
     defaults:
       run:
         working-directory: go_app/backend
@@ -71,7 +70,6 @@ jobs:
     name: Go Security Checks
     runs-on: ubuntu-latest
     needs: test
-
     defaults:
       run:
         working-directory: go_app/backend
@@ -101,3 +99,22 @@ jobs:
         with:
           work-dir: go_app/backend
           go-package: ./...
+
+  trivy:
+    name: Security Scan (Trivy)
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Build image
+        run: docker build -t whoknows-backend .
+
+      - name: Run Trivy scan
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: whoknows-backend
+          severity: HIGH,CRITICAL
+          exit-code: 1
