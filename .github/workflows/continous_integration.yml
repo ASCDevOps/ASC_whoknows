@@ -66,3 +66,38 @@ jobs:
           version: latest
           working-directory: go_app/backend
           only-new-issues: true # Can be changed so it looks through all files
+
+  security:
+    name: Go Security Checks
+    runs-on: ubuntu-latest
+    needs: test
+
+    defaults:
+      run:
+        working-directory: go_app/backend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Set up Go
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version-file: go_app/backend/go.mod
+          cache: true
+          cache-dependency-path: go_app/backend/go.sum
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Run race detector
+        run: go test -race ./...
+
+      - name: Run go vet
+        run: go vet ./...
+
+      - name: Run govulncheck
+        uses: golang/govulncheck-action@v1
+        with:
+          work-dir: go_app/backend
+          go-package: ./...
