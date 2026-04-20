@@ -1,17 +1,38 @@
-{% extends "layout.html" %}
-{% block title %}Sign In{% endblock %}
-{% block body %}
-  <h2>Log In</h2>
-  {% if error %}<div class="error"><strong>Error:</strong> {{ error }}</div>{% endif %}
-  <form action="/api/login" method="POST">
-    <dl>
-      <dt>Username:
-      <dd><input type="text" name="username" size="30" value="{{ request.form.username }}">
-      <dt>Password:
-      <dd><input type="password" name="password" size="30">
-    </dl>
-    <div class="actions">
-      <input type="submit" id="login-button" value="Log In">
-    </div>
-  </form>
-{% endblock %}
+{{ define "body" }}
+<h2>Log In</h2>
+
+{{ if .Error }}
+<div class="error"><strong>Error:</strong> {{ .Error }}</div>
+{{ end }}
+
+<form>
+  <dl>
+    <dt>Username:</dt>
+    <dd><input type="text" name="username" size="30"></dd>
+    <dt>Password:</dt>
+    <dd><input type="password" name="password" size="30"></dd>
+  </dl>
+  <div class="actions">
+    <input type="submit" id="login-button" value="Log In">
+  </div>
+</form>
+<script>
+document.querySelector("form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            username: document.querySelector("[name=username]").value,
+            password: document.querySelector("[name=password]").value,
+        })
+    });
+    if (res.ok) {
+        window.location.href = "/";
+    } else {
+        const data = await res.json();
+        alert(data.message || "Login failed");
+    }
+});
+</script>
+{{ end }}

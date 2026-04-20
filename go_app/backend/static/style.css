@@ -1,81 +1,282 @@
-/* Website Defaults */
+/* ===== Tokens ===== */
+:root {
+  --bg: #f7f5f0;
+  --surface: #ffffff;
+  --border: #e2ddd6;
+  --text: #1a1814;
+  --muted: #8a8478;
+  --accent: #2d5be3;
+  --accent-hover: #1e45c8;
+  --danger-bg: #fff1f0;
+  --danger-border: #ffb3ae;
+  --success-bg: #f0faf6;
+  --success-border: #86e0c0;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --nav-height: 56px;
+}
+
+/* ===== Base ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 body {
-    font-family: 'Trebuchet MS', sans-serif;
-    font-size: 14px;
+  font-family: 'Georgia', serif;
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
 }
 
-div.page div.body {
-    padding: 10px;
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.15s;
 }
 
-div.page div.footer {
-    background: #eee;
-    color: #888;
-    padding: 5px 10px;
-    font-size: 12px;
+a:hover {
+  color: var(--accent-hover);
 }
 
-
-ul.flashes {
-    list-style: none;
-    margin: 10px 10px 0 10px;
-    padding: 0;
+/* ===== Layout ===== */
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--border);
 }
 
-ul.flashes li {
-    background: #B9F3ED;
-    border: 1px solid #81CEC6;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    padding: 4px;
-    font-size: 13px;
+.body {
+  flex: 1;
+  padding: 32px 40px;
 }
 
-div.error {
-    margin: 10px 0;
-    background: #FAE4E4;
-    border: 1px solid #DD6F6F;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    padding: 4px;
-    font-size: 13px;
+/* ===== Navigation ===== */
+.navigation {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-
-/* Custom Styles */
 nav {
-    white-space: nowrap;
-    text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--nav-height);
+  padding: 0 40px;
 }
 
-nav h1, nav a {
-    display: inline-block;
-    margin-right: 20px;
+nav h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: normal;
+  letter-spacing: -0.02em;
 }
 
-#nav-login, #nav-register, #nav-logout {
-    float: right;
+#nav-logo {
+  color: var(--text);
+  font-style: italic;
 }
 
-input {
-    width: 85%;
-    padding: 10px;
-    margin: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+#nav-logo:hover {
+  color: var(--accent);
 }
 
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-right a {
+  font-family: 'Trebuchet MS', sans-serif;
+  font-size: 13px;
+  color: var(--muted);
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-right a:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ===== Footer ===== */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 16px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Trebuchet MS', sans-serif;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.footer a {
+  color: var(--muted);
+}
+
+.footer a:hover {
+  color: var(--text);
+}
+
+/* ===== Flash Messages ===== */
+.flashes {
+  list-style: none;
+  margin: 0 40px;
+  padding: 0;
+}
+
+.flashes li {
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 13px;
+  font-family: 'Trebuchet MS', sans-serif;
+  margin-top: 16px;
+}
+
+/* ===== Error Box ===== */
+.error {
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 13px;
+  font-family: 'Trebuchet MS', sans-serif;
+  margin-bottom: 20px;
+}
+
+/* ===== Forms ===== */
+dl {
+  margin: 0 0 20px;
+}
+
+dt {
+  font-family: 'Trebuchet MS', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 6px;
+  margin-top: 16px;
+}
+
+dd {
+  margin: 0;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  width: 100%;
+  max-width: 380px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-family: 'Trebuchet MS', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(45, 91, 227, 0.1);
+  background: var(--surface);
+}
+
+input[type="submit"],
 button {
-    width: 10%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f0f0f0;
-    cursor: pointer;
-    margin-left: 10px;
+  padding: 10px 24px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-family: 'Trebuchet MS', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
 }
 
+input[type="submit"]:hover,
+button:hover {
+  background: var(--accent-hover);
+}
+
+input[type="submit"]:active,
 button:active {
-    background-color: #e0e0e0;
-    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  transform: scale(0.98);
+}
+
+.actions {
+  margin-top: 24px;
+}
+
+/* ===== Search Bar ===== */
+#search-input {
+  width: calc(100% - 100px);
+  max-width: none;
+  padding: 12px 16px;
+  font-size: 15px;
+  border-radius: var(--radius) 0 0 var(--radius);
+  border-right: none;
+}
+
+#search-button {
+  width: 90px;
+  padding: 12px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 13px;
+}
+
+/* ===== Search Results ===== */
+#results {
+  margin-top: 28px;
+}
+
+#results > div {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+#results > div:first-child {
+  border-top: 1px solid var(--border);
+}
+
+.search-result-title {
+  font-size: 17px;
+  color: var(--accent);
+  font-style: italic;
+}
+
+.search-result-title:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.search-result-description {
+  font-family: 'Trebuchet MS', sans-serif;
+  font-size: 13px;
+  color: var(--muted);
+  margin: 4px 0 0;
+  line-height: 1.5;
 }
