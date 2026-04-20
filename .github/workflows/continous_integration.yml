@@ -66,6 +66,7 @@ jobs:
           working-directory: go_app/backend
           only-new-issues: true # Can be changed so it looks through all files
 
+  #
   security:
     name: Go Security Checks
     runs-on: ubuntu-latest
