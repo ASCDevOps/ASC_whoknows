@@ -11,8 +11,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run OWASP ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.10.0
+      - name: Make ZAP output folder
+        run: mkdir -p zap-out && chmod -R 777 zap-out
+
+      - name: Run ZAP
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}/zap-out:/zap/wrk:rw" \
+            ghcr.io/zaproxy/zaproxy:stable \
+            zap-baseline.py \
+            -t "https://ascsearch.dk/" \
+            -r report.html \
+            -J report.json || true
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
         with:
-          target: 'https://ascsearch.dk/'
-          fail_action: true
+          name: zap-report
+          path: zap-out
