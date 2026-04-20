@@ -53,7 +53,7 @@ func main() {
 	mux.Handle("/api/login", &handlers.APILoginHandler{DB: db})
 
 	// GET /api/logout - Logout
-	mux.Handle("/api/logout", &logoutHandler{})
+	mux.Handle("/api/logout", &handlers.LogoutHandler{})
 
 	// Serve static
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))

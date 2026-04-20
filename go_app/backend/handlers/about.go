@@ -14,5 +14,12 @@ func (*AboutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-	_ = aboutTemplate.ExecuteTemplate(w, "layout", nil)
+	cookie, err := r.Cookie("session")
+	if err == nil {
+		_ = aboutTemplate.ExecuteTemplate(w, "layout", map[string]any{
+			"User": cookie.Value,
+		})
+	} else {
+		_ = aboutTemplate.ExecuteTemplate(w, "layout", nil)
+	}
 }
