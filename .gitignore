@@ -168,7 +168,7 @@ cython_debug/
 
 # Playwright tests
 node_modules/
-/go_app/test-results/
-/go_app/playwright-report/
-/go_app/blob-report/
-/go_app/playwright/.cache/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
