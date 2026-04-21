@@ -28,6 +28,9 @@ COPY --from=builder /build/app .
 # Copy templates from build, so app can access them at runtime
 COPY --from=builder /build/templates ./templates
 
+# Copy static from build, so app can access them at runtime
+COPY --from=builder /build/static ./static
+
 # Documentation
 EXPOSE 8080
 
