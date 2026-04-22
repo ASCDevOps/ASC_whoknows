@@ -8,6 +8,7 @@ import (
 
 	"whoknows_backend/database"
 	"whoknows_backend/handlers"
+	"whoknows_backend/middleware"
 )
 
 func main() {
@@ -58,6 +59,10 @@ func main() {
 	// Serve static
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
-	// Run the server on port :8080
-	http.ListenAndServe(":8080", mux)
+	// Prometheus metrics endpoint
+	handler := middleware.Metrics(mux)
+
+	// Run the server on port :8080. Handler logs incoming requests and dispatches them to the matching handlers
+	log.Println("Server running on :8080")
+	http.ListenAndServe(":8080", handler)
 }
