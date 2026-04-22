@@ -43,7 +43,7 @@ pre-commit autoupdate
 After installation, the hooks will automatically run on every git commit.
 
 ### Playwright tests
-To initialize playwright.
+#### Initialize Playwright ###
 
 cd into go_app.
 
@@ -57,7 +57,7 @@ npm install
 npx playwright install
 ```
 
-To use playwright.
+#### Use Playwright ###
 First cd to go_app.
 
 ```bash
