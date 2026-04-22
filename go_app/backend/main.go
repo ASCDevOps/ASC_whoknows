@@ -64,5 +64,6 @@ func main() {
 
 	// Run the server on port :8080. Handler logs incoming requests and dispatches them to the matching handlers
 	log.Println("Server running on :8080")
-	http.ListenAndServe(":8080", handler)
+
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }
