@@ -1,0 +1,38 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  group_by: ["alertname", "severity"]
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+  receiver: "discord"
+  routes:
+    - match:
+        severity: critical
+      receiver: "discord"
+      repeat_interval: 1h
+    - match:
+        severity: warning
+      receiver: "discord"
+      repeat_interval: 4h
+
+receivers:
+  - name: "discord"
+    webhook_configs:
+      - url: "https://discord.com/api/webhooks/XXX/XXX"  # <-- Erstat med din webhook URL
+        send_resolved: true
+        http_config:
+          follow_redirects: true
+        title: '{{ template "discord.title" . }}'
+        text: '{{ template "discord.message" . }}'
+
+templates:
+  - "/etc/alertmanager/templates/*.tmpl"
+
+inhibit_rules:
+  - source_match:
+      severity: "critical"
+    target_match:
+      severity: "warning"
+    equal: ["instance"]
