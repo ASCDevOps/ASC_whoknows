@@ -1,4 +1,1 @@
 .env
-prometheus/prometheus.yml
-README.md
-alertmanager/alertmanager.yml

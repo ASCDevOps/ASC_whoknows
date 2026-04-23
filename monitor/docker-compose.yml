@@ -41,6 +41,15 @@ services:
     depends_on:
       - prometheus
 
+  alertmanager-discord:
+    image: benjojo/alertmanager-discord:latest
+    container_name: alertmanager-discord
+    environment:
+      - DISCORD_WEBHOOK=${DISCORD_WEBHOOK}
+    ports:
+      - "9094:9094"
+    restart: unless-stopped
+
 volumes:
   prometheus-data:
   grafana-data:
