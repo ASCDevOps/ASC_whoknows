@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"strings"
+	"whoknows_backend/security"
 	"whoknows_backend/structs"
 )
 
@@ -21,7 +22,7 @@ func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		_ = registerTemplate.ExecuteTemplate(w, "layout", nil)
 		return
 	case http.MethodPost:
-		// nothing here, falls through to your existing logic below
+	// nothing here, falls through to your existing logic below
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
@@ -38,7 +39,6 @@ func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Password:  strings.TrimSpace(r.FormValue("password")),
 		Password2: strings.TrimSpace(r.FormValue("password2")),
 	}
-
 	// Validation
 	if req.Username == "" || req.Email == "" || req.Password == "" {
 		msg := "missing fields"
@@ -62,7 +62,6 @@ func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if h.DB == nil {
 		msg := "database not configured"
-
 		writeRegisterJSON(w, http.StatusInternalServerError, structs.AuthResponse{
 			StatusCode: intPtr(500),
 			Message:    &msg,
@@ -70,11 +69,20 @@ func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := h.DB.Exec(
-		"INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
-		req.Username, req.Email, req.Password,
-	)
+	hashedPassword, err := security.HashPassword(req.Password)
+	if err != nil {
+		msg := "failed to hash password"
+		writeRegisterJSON(w, http.StatusInternalServerError, structs.AuthResponse{
+			StatusCode: intPtr(500),
+			Message:    &msg,
+		})
+		return
+	}
 
+	_, err = h.DB.Exec(
+		"INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+		req.Username, req.Email, hashedPassword,
+	)
 	if err != nil {
 		msg := "user creation failed"
 
@@ -85,12 +93,14 @@ func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	msg := "user registered"
-
-	writeRegisterJSON(w, http.StatusOK, structs.AuthResponse{
-		StatusCode: intPtr(200),
-		Message:    &msg,
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session",
+		Value:    req.Username,
+		Path:     "/",
+		HttpOnly: true,
 	})
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func intPtr(i int) *int {

@@ -225,13 +225,18 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Success response
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"status_code": http.StatusOK,
-		"message":     "User registered successfully",
-	})
+
+	// Session cookie
+	http.SetCookie(w, &http.Cookie{
+
+	Name:     "session",
+	Value:    username,
+	Path:     "/",
+	HttpOnly: true,
+
+})
+
+http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 // Hjælper
