@@ -9,7 +9,7 @@ alerting:
             - alertmanager:9093
 
 rule_files:
-  - "../alertmanager/alerts.yml"
+  - "/etc/prometheus/alerts.yml"
 
 scrape_configs:
   # Prometheus self-monitoring
@@ -17,19 +17,10 @@ scrape_configs:
     static_configs:
       - targets: ["localhost:9090"]
 
-  # Node Exporter - system metrics from the app VM
-  - job_name: "node"
-    static_configs:
-      - targets: ["20.251.163.132:9100"]  # <-- Replace with your app VM IP
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: instance
-        replacement: "whoknows-app"
-
   # cAdvisor - Docker container metrics from the app VM
   - job_name: "cadvisor"
     static_configs:
-      - targets: ["20.251.163.132:8081"]  # <-- Replace with your app VM IP
+      - targets: ["<VM_IP>:8081"]  # <-- Replace with your app VM IP
     relabel_configs:
       - source_labels: [__address__]
         target_label: instance
