@@ -42,7 +42,7 @@ async function crawlPage(pageUrl) {
             if (href && href.startsWith('/wiki/') && !href.includes(':')) {
                 const resolvedUrl = new URL(href, cleanUrl.origin).href;
                 const normalizedUrl = resolvedUrl.split('#')[0];
-                
+
                 if (!visitedUrls.has(normalizedUrl)) {
                     await delay(1000);
                     await crawlPage(normalizedUrl);
