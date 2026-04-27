@@ -8,6 +8,7 @@ import (
 	"strings"
 	"whoknows_backend/security"
 	"whoknows_backend/structs"
+	"whoknows_backend/metrics"
 )
 
 var registerTemplate = template.Must(template.ParseFiles("templates/layout.html", "templates/register.html"))
@@ -27,6 +28,8 @@ func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
+
+	metrics.RegisterAttemptsTotal.Inc()
 
 	if err := r.ParseForm(); err != nil {
 		http.Error(w, "invalid form", http.StatusBadRequest)

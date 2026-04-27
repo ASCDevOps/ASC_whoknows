@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"strings"
+	"whoknows_backend/metrics"
 	"whoknows_backend/security"
 	"whoknows_backend/structs"
 )
@@ -31,6 +32,8 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
+	metrics.LoginAttemptsTotal.Inc()
+
 	var body structs.BodyLoginAPILoginPost
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		writeJSON(w, 422, structs.HTTPValidationError{
@@ -62,6 +65,7 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		body.Username,
 	).Scan(&dbPassword, &mustChangePassword)
 	if err == sql.ErrNoRows {
+		metrics.LoginFailureTotal.Inc()
 		status := 401
 		msg := "invalid credentials"
 		writeJSON(w, 401, structs.AuthResponse{StatusCode: &status, Message: &msg})
