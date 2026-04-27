@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"strings"
+
 	"whoknows_backend/metrics"
 	"whoknows_backend/security"
 	"whoknows_backend/structs"
@@ -32,6 +33,7 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
+
 	metrics.LoginAttemptsTotal.Inc()
 
 	var body structs.BodyLoginAPILoginPost
@@ -43,6 +45,7 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
 	if strings.TrimSpace(body.Username) == "" || strings.TrimSpace(body.Password) == "" {
 		writeJSON(w, 422, structs.HTTPValidationError{
 			Detail: []structs.ValidationError{
@@ -52,31 +55,38 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
 	if h.DB == nil {
 		status := 500
 		msg := "database not configured"
 		writeJSON(w, 500, structs.AuthResponse{StatusCode: &status, Message: &msg})
 		return
 	}
+
 	var dbPassword string
 	var mustChangePassword int
+
 	err := h.DB.QueryRow(
 		"SELECT password, must_change_password FROM users WHERE username = ?",
 		body.Username,
 	).Scan(&dbPassword, &mustChangePassword)
+
 	if err == sql.ErrNoRows {
 		metrics.LoginFailureTotal.Inc()
+
 		status := 401
 		msg := "invalid credentials"
 		writeJSON(w, 401, structs.AuthResponse{StatusCode: &status, Message: &msg})
 		return
 	}
+
 	if err != nil {
 		status := 500
 		msg := "database error"
 		writeJSON(w, 500, structs.AuthResponse{StatusCode: &status, Message: &msg})
 		return
 	}
+
 	if err := security.CheckPassword(body.Password, dbPassword); err != nil {
 		if dbPassword == body.Password {
 			hashedPassword, hashErr := security.HashPassword(body.Password)
@@ -86,6 +96,7 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				writeJSON(w, 500, structs.AuthResponse{StatusCode: &status, Message: &msg})
 				return
 			}
+
 			_, updateErr := h.DB.Exec(
 				"UPDATE users SET password = ?, must_change_password = 1 WHERE username = ?",
 				hashedPassword, body.Username,
@@ -96,27 +107,36 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				writeJSON(w, 500, structs.AuthResponse{StatusCode: &status, Message: &msg})
 				return
 			}
+
 			mustChangePassword = 1
 		} else {
+			metrics.LoginFailureTotal.Inc()
+
 			status := 401
 			msg := "invalid credentials"
 			writeJSON(w, 401, structs.AuthResponse{StatusCode: &status, Message: &msg})
 			return
 		}
 	}
+
 	status := 200
 	msg := "logged in"
 	requiresPasswordChange := false
+
 	if mustChangePassword == 1 {
 		msg = "password change required"
 		requiresPasswordChange = true
 	}
+
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session",
 		Value:    body.Username,
 		Path:     "/",
 		HttpOnly: true,
 	})
+
+	metrics.LoginSuccessTotal.Inc()
+
 	writeJSON(w, 200, structs.AuthResponse{
 		StatusCode:             &status,
 		Message:                &msg,

@@ -17,15 +17,7 @@ var LoginAttemptsTotal = prometheus.NewCounter(
 	},
 )
 
-var RegisterAttemptsTotal = prometheus.NewCounter(
-	prometheus.CounterOpts{
-		Name: "whoknows_register_attempts_total",
-		Help: "Total number of register attempts",
-	},
-)
-
 var LoginSuccessTotal = prometheus.NewCounter(
-
 	prometheus.CounterOpts{
 		Name: "whoknows_login_success_total",
 		Help: "Total successful logins",
@@ -33,10 +25,17 @@ var LoginSuccessTotal = prometheus.NewCounter(
 )
 
 var LoginFailureTotal = prometheus.NewCounter(
-
 	prometheus.CounterOpts{
 		Name: "whoknows_login_failure_total",
 		Help: "Total failed logins",
+	},
+)
+
+// ✅ NY – kun succesfulde registreringer
+var RegisterSuccessTotal = prometheus.NewCounter(
+	prometheus.CounterOpts{
+		Name: "whoknows_register_success_total",
+		Help: "Total successful user registrations",
 	},
 )
 
@@ -44,9 +43,8 @@ func Register() {
 	prometheus.MustRegister(
 		HttpRequestsTotal,
 		LoginAttemptsTotal,
-		RegisterAttemptsTotal,
 		LoginSuccessTotal,
 		LoginFailureTotal,
+		RegisterSuccessTotal,
 	)
-
 }
