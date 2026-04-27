@@ -28,7 +28,5 @@ scrape_configs:
 
   # WhoKnows Go backend metrics
   - job_name: "whoknows-backend"
-
     static_configs:
-
       - targets: ["<APP_VM_IP>:8080"]
