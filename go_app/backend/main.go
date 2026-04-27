@@ -8,7 +8,10 @@ import (
 
 	"whoknows_backend/database"
 	"whoknows_backend/handlers"
+	"whoknows_backend/metrics"
 	"whoknows_backend/middleware"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {
@@ -22,6 +25,10 @@ func main() {
 
 	// Take incoming requests and dispatch them to the matching handlers
 	mux := http.NewServeMux()
+
+	// Prometheus metrics
+	metrics.Register()
+	mux.Handle("/metrics", promhttp.Handler())
 
 	// Change Password
 	mux.Handle("/api/change-password", &handlers.ChangePasswordHandler{DB: db})
