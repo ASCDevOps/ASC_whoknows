@@ -6,6 +6,7 @@ import (
 	_ "modernc.org/sqlite"
 	"net/http"
 	"strings"
+	"whoknows_backend/metrics"
 	"whoknows_backend/security"
 	"whoknows_backend/structs"
 )
@@ -65,13 +66,13 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rows, err := h.DB.Query(
-	`SELECT p.title, p.url, p.language, p.last_updated, p.content
+		`SELECT p.title, p.url, p.language, p.last_updated, p.content
 	 FROM pages_fts
 	 JOIN pages p ON p.rowid = pages_fts.rowid
 	 WHERE pages_fts MATCH ?
 	   AND p.language = ?`,
-	q, lang,
-)
+		q, lang,
+	)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -225,18 +226,17 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	metrics.RegisterSuccessTotal.Inc()
 
 	// Session cookie
 	http.SetCookie(w, &http.Cookie{
+		Name:     "session",
+		Value:    username,
+		Path:     "/",
+		HttpOnly: true,
+	})
 
-	Name:     "session",
-	Value:    username,
-	Path:     "/",
-	HttpOnly: true,
-
-})
-
-http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 // Hjælper
