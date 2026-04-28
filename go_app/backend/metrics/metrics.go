@@ -31,7 +31,6 @@ var LoginFailureTotal = prometheus.NewCounter(
 	},
 )
 
-// ✅ NY – kun succesfulde registreringer
 var RegisterSuccessTotal = prometheus.NewCounter(
 	prometheus.CounterOpts{
 		Name: "whoknows_register_success_total",
