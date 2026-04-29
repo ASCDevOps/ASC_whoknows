@@ -38,17 +38,17 @@ type apiSearchHandler struct {
 }
 
 func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
-
+	metrics.SearchRequestsTotal.Inc()
 	q := r.URL.Query().Get("q")
 	lang := r.URL.Query().Get("language")
 	if lang == "" {
 		lang = "en"
 	}
-
 	// q er required -> 422 hvis den mangler
 	if strings.TrimSpace(q) == "" {
 		status := 422
@@ -59,12 +59,16 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-
+	normalized := strings.ToLower(strings.TrimSpace(q))
+	if len(normalized) > 50 {
+		normalized = normalized[:50]
+	}
+	metrics.SearchQueriesTotal.WithLabelValues(normalized).Inc()
 	if h.DB == nil {
+		metrics.SearchErrorsTotal.Inc()
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
 	rows, err := h.DB.Query(
 		`SELECT p.title, p.url, p.language, p.last_updated, p.content
 	 FROM pages_fts
@@ -74,19 +78,18 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		q, lang,
 	)
 	if err != nil {
+		metrics.SearchErrorsTotal.Inc()
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()
-
 	data := make([]map[string]any, 0)
 	for rows.Next() {
 		var title, url, language, content string
-		var lastUpdated any // kan være null
+		var lastUpdated any
 		if err := rows.Scan(&title, &url, &language, &lastUpdated, &content); err != nil {
 			continue
 		}
-
 		data = append(data, map[string]any{
 			"title":        title,
 			"url":          url,
@@ -95,8 +98,12 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			"content":      content,
 		})
 	}
-
+	metrics.SearchResultsTotal.Add(float64(len(data)))
+	if len(data) == 0 {
+		metrics.SearchNoResultsTotal.Inc()
+	}
 	writeJSON(w, 200, structs.SearchResponse{Data: data})
+
 }
 
 // POST /api/register

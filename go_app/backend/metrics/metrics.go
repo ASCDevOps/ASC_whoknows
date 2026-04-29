@@ -38,6 +38,47 @@ var RegisterSuccessTotal = prometheus.NewCounter(
 	},
 )
 
+var SearchRequestsTotal = prometheus.NewCounter(
+
+	prometheus.CounterOpts{
+		Name: "whoknows_search_requests_total",
+		Help: "Total number of search requests",
+	},
+)
+
+var SearchQueriesTotal = prometheus.NewCounterVec(
+
+	prometheus.CounterOpts{
+		Name: "whoknows_search_queries_total",
+		Help: "Total search queries",
+	},
+	[]string{"query"},
+)
+
+var SearchNoResultsTotal = prometheus.NewCounter(
+
+	prometheus.CounterOpts{
+		Name: "whoknows_search_no_results_total",
+		Help: "Total searches with no results",
+	},
+)
+
+var SearchResultsTotal = prometheus.NewCounter(
+
+	prometheus.CounterOpts{
+		Name: "whoknows_search_results_total",
+		Help: "Total number of results returned",
+	},
+)
+
+var SearchErrorsTotal = prometheus.NewCounter(
+
+	prometheus.CounterOpts{
+		Name: "whoknows_search_errors_total",
+		Help: "Total search errors",
+	},
+)
+
 func Register() {
 	prometheus.MustRegister(
 		HttpRequestsTotal,
@@ -45,5 +86,10 @@ func Register() {
 		LoginSuccessTotal,
 		LoginFailureTotal,
 		RegisterSuccessTotal,
+		SearchRequestsTotal,
+		SearchQueriesTotal,
+		SearchNoResultsTotal,
+		SearchResultsTotal,
+		SearchErrorsTotal,
 	)
 }
