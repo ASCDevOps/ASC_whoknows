@@ -45,7 +45,7 @@ func (h *ChangePasswordHandler) ServeHTTP(w http.ResponseWriter, r *http.Request
 	}
 
 	_, err = h.DB.Exec(
-		"UPDATE users SET password = ?, must_change_password = 0 WHERE username = ?",
+		"UPDATE users SET password = $1, must_change_password = 0 WHERE username = $2",
 		hashedPassword,
 		body.Username,
 	)

@@ -3,7 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	_ "modernc.org/sqlite"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"net/http"
 	"strings"
 	"whoknows_backend/metrics"
@@ -70,11 +70,10 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rows, err := h.DB.Query(
-		`SELECT p.title, p.url, p.language, p.last_updated, p.content
-	 FROM pages_fts
-	 JOIN pages p ON p.rowid = pages_fts.rowid
-	 WHERE pages_fts MATCH ?
-	   AND p.language = ?`,
+		`SELECT title, url, language, last_updated, content
+		FROM pages
+		WHERE to_tsvector('english', title || ' ' || content) @@ plainto_tsquery($1)
+		AND language = $2`,
 		q, lang,
 	)
 	if err != nil {
