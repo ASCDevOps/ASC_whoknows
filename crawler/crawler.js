@@ -8,7 +8,7 @@ const queue = ['https://en.wikipedia.org/wiki/Elasticsearch'];
 const MAX_PAGES = 100;
 const DELAY_MS = 1000;
 
-const OUTPUT_FILE = 'pages.jsonl';
+const OUTPUT_FILE = './data/pages.jsonl';
 
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
