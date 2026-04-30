@@ -31,7 +31,8 @@ jobs:
           ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }}
           ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}
           ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
-          DB_PATH=${{ secrets.DB_PATH }}
+          DATABASE_URL=${{ secrets.DATABASE_URL }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
           EOF
 
       - name: Transfer .env file to server

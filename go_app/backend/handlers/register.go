@@ -81,7 +81,7 @@ func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err = h.DB.Exec(
-		"INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+		"INSERT INTO users (username, email, password) VALUES ($1, $2, $3)",
 		req.Username, req.Email, hashedPassword,
 	)
 	if err != nil {

@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	_ "modernc.org/sqlite"
+	_ "github.com/jackc/pgx/v5/stdlib"
 
 	"whoknows_backend/database"
 	"whoknows_backend/handlers"

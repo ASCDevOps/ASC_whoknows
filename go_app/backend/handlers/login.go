@@ -67,7 +67,7 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var mustChangePassword int
 
 	err := h.DB.QueryRow(
-		"SELECT password, must_change_password FROM users WHERE username = ?",
+		"SELECT password, must_change_password FROM users WHERE username = $1",
 		body.Username,
 	).Scan(&dbPassword, &mustChangePassword)
 
@@ -98,7 +98,7 @@ func (h *APILoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 
 			_, updateErr := h.DB.Exec(
-				"UPDATE users SET password = ?, must_change_password = 1 WHERE username = ?",
+				"UPDATE users SET password = $1, must_change_password = 1 WHERE username = $2",
 				hashedPassword, body.Username,
 			)
 			if updateErr != nil {
