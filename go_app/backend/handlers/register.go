@@ -9,6 +9,7 @@ import (
 	"whoknows_backend/metrics"
 	"whoknows_backend/security"
 	"whoknows_backend/structs"
+	"log"
 )
 
 var registerTemplate = template.Must(template.ParseFiles("templates/layout.html", "templates/register.html"))
@@ -85,6 +86,7 @@ func (h *RegisterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		req.Username, req.Email, hashedPassword,
 	)
 	if err != nil {
+		log.Printf("DB insert error: %v", err)
 		msg := "user creation failed"
 
 		writeRegisterJSON(w, http.StatusInternalServerError, structs.AuthResponse{
