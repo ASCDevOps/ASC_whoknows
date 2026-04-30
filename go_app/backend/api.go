@@ -197,7 +197,7 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stmt, err := h.db.Prepare(`INSERT INTO users (username, email, password) VALUES (?, ?, ?)`)
+	stmt, err := h.db.Prepare(`INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
