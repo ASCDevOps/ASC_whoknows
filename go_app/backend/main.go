@@ -55,7 +55,7 @@ func main() {
 	mux.Handle("/api/search", &apiSearchHandler{DB: db})
 
 	// POST /api/register - Register
-	mux.Handle("/api/register", &registerHandlerAPI{db: db})
+	mux.Handle("/api/register", &handlers.RegisterHandler{DB: db})
 
 	// POST /api/login - Login
 	mux.Handle("/api/login", &handlers.APILoginHandler{DB: db})
