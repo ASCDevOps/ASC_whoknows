@@ -2,6 +2,9 @@
 
 * I changed everything in the code to postgres (check issue with PR's on)
 * Migrated the database data with sqlite3 dump file, which i cleansed for DDL statements so that only insert statements where left. Then i piped the data directly into the database in the docker container.
+* We are beginning to have a lot of users + web scraping, therefore we need another database as sqlite won't be enough.
+* Postgres works better with docker, handlesa concurrent writes, where sqlite locks the entire file.
+* See Github Discussion for choices
 
 ## Crontab & backups
 
@@ -10,7 +13,7 @@
 * The migration to postgres has made this redundant, which reminded me that this might not be in the documentation
 
 ``` Crontab
-0 0 * * * /home/appuser/backups/backup_db.sh >> /home/appuser/backups/backup.log 2>&1 
+0 0 * * * /home/appuser/backups/backup_db.sh >> /home/appuser/backups/backup.log 2>&1
 ```
 
 ``` .sh
