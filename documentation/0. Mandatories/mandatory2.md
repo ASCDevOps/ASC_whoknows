@@ -45,3 +45,21 @@
 1. Private matters in the team
 2. Too big tasks? Everyone should participate, by breaking down the tasks.
 3. Easter-vacation, sickness
+
+### Monitoring Realization
+
+* Med monitorering via Prometheus og visualisering i Grafana fik vi indsigt i, hvordan vores system faktisk bliver brugt i praksis.
+
+* Vi blev opmærksomme på, hvor mange ting man kan holde øje med – alt fra VM’ens health til hvad brugerne søger på.
+
+* Da WhoKnows er en hjemmeside, hvor søgning er centralt, blev det tydeligt, hvor vigtigt det er at kunne følge med i,
+   hvad der bliver søgt på, hvor ofte der søges, og om der opstår fejl i søgningerne. Samtidig blev det vigtigt at forstå brugeroplevelsen: kan folk logge ind, og hvad går eventuelt galt?
+
+* I starten brugte vi Postman til monitorering, hvor vi fik emails ved fejl, men vi gik senere over til Discord,
+  hvor vi får notifikationer med det samme, hvis noget fejler – især hvis vores VM går ned.
+
+* Derudover monitorerer vi også vores endpoints, så vi kan se, hvordan vores API bliver brugt.
+
+* Vi blev også opmærksomme på vigtigheden af vores VM’s uptime, da det er afgørende for, om applikationen overhovedet er tilgængelig.
+
+* Overordnet set lærte vi, at monitorering ikke kun handler om drift, men også om at forstå brugerne og forbedre systemet ud fra deres adfærd.
