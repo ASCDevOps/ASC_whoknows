@@ -12,8 +12,11 @@ import (
 )
 
 // GET /api/logout - Logout
+//
+//nolint:unused
 type logoutHandler struct{}
 
+//nolint:unused
 func (*logoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -29,7 +32,10 @@ func (*logoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 // GET /api/search
@@ -38,17 +44,19 @@ type apiSearchHandler struct {
 }
 
 func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
+
 	metrics.SearchRequestsTotal.Inc()
+
 	q := r.URL.Query().Get("q")
 	lang := r.URL.Query().Get("language")
 	if lang == "" {
 		lang = "en"
 	}
+
 	// q er required -> 422 hvis den mangler
 	if strings.TrimSpace(q) == "" {
 		status := 422
@@ -59,16 +67,20 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
 	normalized := strings.ToLower(strings.TrimSpace(q))
 	if len(normalized) > 50 {
 		normalized = normalized[:50]
 	}
+
 	metrics.SearchQueriesTotal.WithLabelValues(normalized).Inc()
+
 	if h.DB == nil {
 		metrics.SearchErrorsTotal.Inc()
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
 	rows, err := h.DB.Query(
 		`SELECT title, url, language, last_updated, content
 		FROM pages
@@ -81,7 +93,10 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+	}()
+
 	data := make([]map[string]any, 0)
 	for rows.Next() {
 		var title, url, language, content string
@@ -97,19 +112,23 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			"content":      content,
 		})
 	}
+
 	metrics.SearchResultsTotal.Add(float64(len(data)))
 	if len(data) == 0 {
 		metrics.SearchNoResultsTotal.Inc()
 	}
-	writeJSON(w, 200, structs.SearchResponse{Data: data})
 
+	writeJSON(w, 200, structs.SearchResponse{Data: data})
 }
 
 // POST /api/register
+//
+//nolint:unused
 type registerHandlerAPI struct {
 	db *sql.DB
 }
 
+//nolint:unused
 func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Checks if method is POST
 	if r.Method != http.MethodPost {
@@ -119,9 +138,7 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Parses form,
 	if err := r.ParseForm(); err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode(map[string]interface{}{
+		writeJSON(w, http.StatusUnprocessableEntity, map[string]interface{}{
 			"detail": []map[string]interface{}{
 				{
 					"loc":  []string{"body"},
@@ -141,9 +158,7 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Validates form-data, checks for required, checks if passwords are matching
 	if username == "" {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode(map[string]interface{}{
+		writeJSON(w, http.StatusUnprocessableEntity, map[string]interface{}{
 			"detail": []map[string]interface{}{
 				{
 					"loc":  []string{"username"},
@@ -154,10 +169,9 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
 	if email == "" {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode(map[string]interface{}{
+		writeJSON(w, http.StatusUnprocessableEntity, map[string]interface{}{
 			"detail": []map[string]interface{}{
 				{
 					"loc":  []string{"email"},
@@ -168,10 +182,9 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
 	if password == "" {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode(map[string]interface{}{
+		writeJSON(w, http.StatusUnprocessableEntity, map[string]interface{}{
 			"detail": []map[string]interface{}{
 				{
 					"loc":  []string{"password"},
@@ -182,10 +195,9 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
 	if password2 != "" && password != password2 {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode(map[string]interface{}{
+		writeJSON(w, http.StatusUnprocessableEntity, map[string]interface{}{
 			"detail": []map[string]interface{}{
 				{
 					"loc":  []string{"password2"},
@@ -199,21 +211,19 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	stmt, err := h.db.Prepare(`INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		_ = json.NewEncoder(w).Encode(map[string]interface{}{
+		writeJSON(w, http.StatusInternalServerError, map[string]interface{}{
 			"status_code": http.StatusInternalServerError,
 			"message":     "Failed to prepare database statement",
 		})
 		return
 	}
-	defer stmt.Close()
+	defer func() {
+		_ = stmt.Close()
+	}()
 
 	hashedPassword, err := security.HashPassword(password)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		_ = json.NewEncoder(w).Encode(map[string]interface{}{
+		writeJSON(w, http.StatusInternalServerError, map[string]interface{}{
 			"status_code": http.StatusInternalServerError,
 			"message":     "Failed to hash password",
 		})
@@ -223,9 +233,7 @@ func (h *registerHandlerAPI) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// error handling for UNIQUE (username & email) in SQL
 	_, err = stmt.Exec(username, email, hashedPassword)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusConflict)
-		json.NewEncoder(w).Encode(map[string]interface{}{
+		writeJSON(w, http.StatusConflict, map[string]interface{}{
 			"status_code": http.StatusConflict,
 			"message":     "Username or email already exists",
 		})

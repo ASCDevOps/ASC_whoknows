@@ -64,7 +64,13 @@ func GetCopenhagenWeather() (*WeatherResponse, error) {
 	if err != nil {
 		return nil, fmt.Errorf("API request failed: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+
+		if err := resp.Body.Close(); err != nil {
+			fmt.Printf("failed closing response body: %v\n", err)
+		}
+
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("API returned status %d", resp.StatusCode)
@@ -72,7 +78,7 @@ func GetCopenhagenWeather() (*WeatherResponse, error) {
 
 	var weather WeatherResponse
 	if err := json.NewDecoder(resp.Body).Decode(&weather); err != nil {
-		return nil, fmt.Errorf("Failed parsing JSON: %v", err)
+		return nil, fmt.Errorf("failed parsing JSON: %v", err)
 	}
 
 	return &weather, nil

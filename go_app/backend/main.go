@@ -21,7 +21,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
+	defer func() {
+
+		_ = db.Close()
+
+	}()
 
 	// Take incoming requests and dispatch them to the matching handlers
 	mux := http.NewServeMux()
