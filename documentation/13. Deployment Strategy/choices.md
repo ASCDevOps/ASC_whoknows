@@ -37,3 +37,40 @@ rclone copy "$BACKUP_FILE" "$REMOTE_GDRIVE"
 find "$BACKUP_DIR" -type f -name "*.db" -mtime +7 -delete
 
 ```
+
+## Deployment Strategy
+
+### Thinks to consider when deploying
+* Zero downtime
+* Downtime tolerance
+* Scalability
+* Rollback plan
+* Cost efficiency
+
+### Currently
+* Considering these things while deploying, we can surely say that our current deployment method lacks...
+* Downtime everytime someone pushes to github, no rollback (unless manually reverting image tag), scalability is non-existent.
+
+### Context
+* The most critical thing in our application is having low-downtime and securing user logins. Extreme complexity is therefore not needed. Canary would be overkill and have low cost-efficiency.
+* We are realising several times a week.
+
+### Choice
+* A good compromise would be something like Blue-Green deployment.
+#### Pros
+* Really easy to rollback
+* Zero downtime
+* Low complexity / Low Cost. If we were to implement it we are only 3 developers.
+* Good for weekly releases
+#### Cons
+* Dependent on monitoring system for fast rollbacks
+* Developers should never manually test, everything should be automatic. (Setup might take some time)
+
+### Explanation: Blue-Green
+* Two identical environments
+* Only 1 is live
+#### Example:
+* Blue is live to begin with
+* Green is your staging environment. Once all tests in staging pass, switch the traffic to green.
+
+![blue-green-databases](image.png)
