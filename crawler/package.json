@@ -11,6 +11,6 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "jsdom": "^29.0.2"
+    "jsdom": "^29.1.1"
   }
 }
