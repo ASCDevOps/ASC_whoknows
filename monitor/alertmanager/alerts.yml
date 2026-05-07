@@ -2,22 +2,12 @@ groups:
   - name: whoknows_alerts
     rules:
 
-      # App VM is unreachable
-      - alert: NodeDown
-        expr: up{job="node"} == 0
+      # Go app container not running
+      - alert: AppContainerDown
+        expr: absent(container_start_time_seconds{name=~".*app.*"}) or count(container_start_time_seconds{name=~".*app.*"}) == 0
         for: 1m
         labels:
           severity: critical
         annotations:
-          summary: "App VM is down"
-          description: "Node exporter on the app VM has been unreachable for more than 1 minute."
-
-      # Go app container not running
-      - alert: AppContainerDown
-        expr: absent(container_last_seen{name=~".*app.*"}) or count(container_last_seen{name=~".*app.*"}) == 0
-        for: 2m
-        labels:
-          severity: critical
-        annotations:
           summary: "WhoKnows app container is not running"
-          description: "The app container has not been seen for more than 2 minutes."
+          description: "The app container has not been seen for more than 1 minute."

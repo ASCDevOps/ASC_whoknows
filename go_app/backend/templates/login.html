@@ -1,5 +1,5 @@
 {{ define "body" }}
-<h2>Log In</h2>
+<h1>Log In</h1>
 
 {{ if .Error }}
 <div class="error"><strong>Error:</strong> {{ .Error }}</div>
@@ -7,15 +7,18 @@
 
 <form>
   <dl>
-    <dt>Username:</dt>
-    <dd><input type="text" name="username" size="30"></dd>
-    <dt>Password:</dt>
-    <dd><input type="password" name="password" size="30"></dd>
+    <dt><label for="username">Username:</label></dt>
+    <dd><input id="username" type="text" name="username" size="30" autocomplete="username"></dd>
+
+    <dt><label for="password">Password:</label></dt>
+    <dd><input id="password" type="password" name="password" size="30" autocomplete="current-password"></dd>
   </dl>
+
   <div class="actions">
     <input type="submit" id="login-button" value="Log In">
   </div>
 </form>
+
 <script>
 document.querySelector("form").addEventListener("submit", async (e) => {
     e.preventDefault();

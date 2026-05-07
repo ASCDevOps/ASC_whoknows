@@ -1,6 +1,6 @@
 {{ define "layout" }}
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <title>¿Who Knows?</title>
   <link rel="stylesheet" type="text/css" href="/static/style.css">
@@ -9,24 +9,28 @@
 <body>
 <div class="page">
   <div class="navigation">
-<nav>
-  <h1><a id="nav-logo" href="/search">¿Who Knows?</a></h1>
+    <nav>
+      <div class="site-title">
+        <a id="nav-logo" href="/search">¿Who Knows?</a>
+      </div>
 
-  <div class="nav-right">
-    {{ if .User }}
-      <a id="nav-logout" href="/api/logout">Log out</a>
-    {{ else }}
-      <a id="nav-login" href="/login">Log in</a>
-      <a id="nav-register" href="/register">Register</a>
-    {{ end }}
+      <div class="nav-right">
+        {{ if .User }}
+          <a id="nav-logout" href="/api/logout">Log out</a>
+        {{ else }}
+          <a id="nav-login" href="/login">Log in</a>
+          <a id="nav-register" href="/register">Register</a>
+        {{ end }}
+      </div>
+    </nav>
   </div>
-</nav>
-  </div>
- {{ if .Flash }}
-  <ul class="flashes">
+
+  {{ if .Flash }}
+    <ul class="flashes">
       <li>{{ .Flash }}</li>
-  </ul>
-{{ end }}
+    </ul>
+  {{ end }}
+
   <div class="body">
     {{ template "body" . }}
   </div>

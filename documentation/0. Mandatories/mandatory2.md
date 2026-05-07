@@ -2,16 +2,17 @@
 
 
 ## Chris
-* For at forstå DevOps kan man se det som en sammensætning af Development og Operations. For os handler det derfor både om at udvikle software, sørge for stabil drift og automatisere så meget som muligt, så det hele hænger sammen.
+* To understand DevOps, it can be seen as a combination of Development and Operations. For us, this means both developing software, ensuring stable operation, and automating as much as possible so everything works together.
 
-* Vi arbejder DevOps-orienteret ved at bruge CI/CD pipelines i GitHub Actions, hvor vores kode automatisk bliver bygget, testet og tjekket med linting ved hver pull request.
+* We work in a DevOps-oriented way by using CI/CD pipelines in GitHub Actions, where our code is automatically built, tested, and checked with linting on every pull request.
 
-* Derudover bruger vi pre-commit hooks lokalt til at sikre, at vores kode lever op til de samme krav, inden vi overhovedet pusher.
-* Vi bruger også Docker til at containerisere vores applikation, så vi får et ensartet miljø, uanset hvor den kører.
+* In addition, we use pre-commit hooks locally to ensure that our code meets the same standards before we even push it.
 
-* Selve applikationen kører på en virtuel maskine, hvilket betyder, at vi selv står for både udvikling og drift.
+* We also use Docker to containerize our application, ensuring a consistent environment regardless of where it runs.
 
-* Derudover har vi implementeret password hashing og arbejdet med databaseændringer, hvilket viser, at vi også tænker sikkerhed ind som en del af vores proces – altså et DevSecOps-perspektiv.
+* The application itself runs on a virtual machine, which means we are responsible for both development and operations.
+
+* Additionally, we have implemented password hashing and worked with database changes, showing that we also consider security as part of our process – in other words, a DevSecOps perspective.
 
 ## Asger
 
@@ -45,3 +46,49 @@
 1. Private matters in the team
 2. Too big tasks? Everyone should participate, by breaking down the tasks.
 3. Easter-vacation, sickness
+
+### Monitoring Realization
+
+* With monitoring via Prometheus and visualization in Grafana, we gained insight into how our system is actually used in practice.
+* We became aware of how many things can be monitored – from the VM’s health to what users are searching for.
+
+* Since WhoKnows is a website where search is central, it became clear how important it is to track what is being searched, how often searches occur, and whether errors happen during searches. At the same time, it became important to understand the user experience: can users log in, and what might be going wrong?
+
+* Initially, we used Postman for monitoring, where we received email alerts on failures. Later, we switched to Discord, where we receive instant notifications if something fails – especially if our VM goes down.
+
+* In addition, we monitor our endpoints to understand how our API is used in practice.
+
+* We also became aware of the importance of our VM’s uptime, as it is crucial for the availability of the application.
+
+* Realization – Through monitoring, we became aware of what is actually happening in our system, such as how our endpoints are used and where errors may occur.
+
+* Fix – Based on this, we improved our monitoring by setting up Prometheus and Grafana to better collect and visualize data. At the same time, we moved from Postman to Discord notifications and increased our focus on the most frequently used endpoints.
+
+* Overall, we learned that monitoring is not only about operations, but also about understanding users and improving the system based on their behavior.
+
+* In short: We went from simply observing the system to actively improving it based on data.
+
+### Software Quality
+
+####  DeepSource Issues
+
+**Which ones did you fix? Why?**
+
+- Removed unused method receivers, doesn't make sense to have it if not used.
+- Removed unused code, same as other.
+
+**Which ones did you ignore? Why?**
+
+- Removing log.fatal, which will run if database isn't setup correctly.
+
+Log.fatal will run os.exit which will terminate the program, apparently its bad practice to use, but it makes sense for us because we dont want to run the program if there is no database connected.
+
+- The documentation of an exported type should start with the type’s name
+
+I feel like this is something each team should choose for themselves.
+Instead of the type's name we have earlier chosen to write the endpoint which uses the type.
+
+**Conclusion: Do you agree with the findings?**
+
+- DeepSource has some uses, it found some possibilities of bugs, but it primarily cleaned up the code.
+- Some of its "issues" was kind of intrusive and shouldn't necessarily be "fixed"

@@ -4,11 +4,14 @@ import (
 	"log"
 	"net/http"
 
-	_ "modernc.org/sqlite"
+	_ "github.com/jackc/pgx/v5/stdlib"
 
 	"whoknows_backend/database"
 	"whoknows_backend/handlers"
+	"whoknows_backend/metrics"
 	"whoknows_backend/middleware"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {
@@ -22,6 +25,10 @@ func main() {
 
 	// Take incoming requests and dispatch them to the matching handlers
 	mux := http.NewServeMux()
+
+	// Prometheus metrics
+	metrics.Register()
+	mux.Handle("/metrics", promhttp.Handler())
 
 	// Change Password
 	mux.Handle("/api/change-password", &handlers.ChangePasswordHandler{DB: db})
@@ -48,7 +55,7 @@ func main() {
 	mux.Handle("/api/search", &apiSearchHandler{DB: db})
 
 	// POST /api/register - Register
-	mux.Handle("/api/register", &registerHandlerAPI{db: db})
+	mux.Handle("/api/register", &handlers.RegisterHandler{DB: db})
 
 	// POST /api/login - Login
 	mux.Handle("/api/login", &handlers.APILoginHandler{DB: db})

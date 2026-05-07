@@ -1,18 +1,31 @@
 {{ define  "body" }}
-<div>
-  <input id="search-input" placeholder="Search..." value="{{ .Query }}"/>
-  <button id="search-button" onclick="makeSearchRequest()">Search</button>
-</div>
+
+<h1>Search</h1>
+
+<form onsubmit="event.preventDefault(); makeSearchRequest();">
+  <label for="search-input">Search</label>
+  <div>
+    <input
+      id="search-input"
+      name="q"
+      type="text"
+      placeholder="Search..."
+      value="{{ .Query }}"
+      autocomplete="off"
+    />
+    <button id="search-button" type="submit">Search</button>
+  </div>
+</form>
 
 <div id="results">
   {{ range .SearchResults }}
   <div>
-      <h2>
-        <a class="search-result-title" href="{{ .URL }}">
+    <h2>
+      <a class="search-result-title" href="{{ .URL }}">
         {{ .Title }}
       </a>
     </h2>
-      <p class="search-result-description">{{ .Description }}</p>
+    <p class="search-result-description">{{ .Description }}</p>
   </div>
   {{ end }}
 </div>
@@ -22,16 +35,7 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     searchInput = document.getElementById("search-input");
-
-    // Focus the input field
     searchInput.focus();
-
-    // Search when the user presses Enter
-    searchInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-          makeSearchRequest();
-        }
-    });
   });
 
   function makeSearchRequest() {
@@ -41,4 +45,5 @@
     window.location.href = url.toString();
   }
 </script>
+
 {{ end }}
