@@ -16,7 +16,7 @@ repos:
         name: gofmt
         language: system
         types: [go]
-        entry: bash -lc 'gofmt -w "$@"'
+        entry: gofmt -w
         pass_filenames: true
 
   # Go linter (same as CI)
