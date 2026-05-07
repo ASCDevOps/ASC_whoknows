@@ -4,12 +4,12 @@ import (
 	"database/sql"
 	"encoding/json"
 	"html/template"
+	"log"
 	"net/http"
 	"strings"
 	"whoknows_backend/metrics"
 	"whoknows_backend/security"
 	"whoknows_backend/structs"
-	"log"
 )
 
 var registerTemplate = template.Must(template.ParseFiles("templates/layout.html", "templates/register.html"))
