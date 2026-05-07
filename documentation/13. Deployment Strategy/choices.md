@@ -74,3 +74,7 @@ find "$BACKUP_DIR" -type f -name "*.db" -mtime +7 -delete
 * Green is your staging environment. Once all tests in staging pass, switch the traffic to green.
 
 ![blue-green-databases](image.png)
+
+## Service Level Agreement (SLA)
+When i was writing the SLA i was thinking that measuring some things in grafana/prometheus would make it easier.
+* API response time => Would give us an SLO more to reach
