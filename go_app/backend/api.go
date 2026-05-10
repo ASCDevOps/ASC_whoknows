@@ -6,6 +6,7 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"net/http"
 	"strings"
+	"time"
 	"whoknows_backend/metrics"
 	"whoknows_backend/structs"
 )
@@ -16,6 +17,16 @@ type apiSearchHandler struct {
 }
 
 func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	start := time.Now()
+
+	defer func() {
+
+		metrics.SearchRequestDuration.
+			WithLabelValues("/api/search", r.Method).
+			Observe(time.Since(start).Seconds())
+
+	}()
+
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
@@ -55,9 +66,9 @@ func (h *apiSearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	rows, err := h.DB.Query(
 		`SELECT title, url, language, last_updated, content
-		FROM pages
-		WHERE to_tsvector('english', title || ' ' || content) @@ plainto_tsquery($1)
-		AND language = $2`,
+			FROM pages
+			WHERE to_tsvector('english', title || ' ' || content) @@ plainto_tsquery($1)
+			AND language = $2`,
 		q, lang,
 	)
 	if err != nil {

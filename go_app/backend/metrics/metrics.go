@@ -79,6 +79,15 @@ var SearchErrorsTotal = prometheus.NewCounter(
 	},
 )
 
+var SearchRequestDuration = prometheus.NewHistogramVec(
+	prometheus.HistogramOpts{
+		Name:    "whoknows_search_request_duration_seconds",
+		Help:    "Duration of search requests in seconds",
+		Buckets: prometheus.DefBuckets,
+	},
+	[]string{"path", "method"},
+)
+
 func Register() {
 	prometheus.MustRegister(
 		HttpRequestsTotal,
@@ -91,5 +100,6 @@ func Register() {
 		SearchNoResultsTotal,
 		SearchResultsTotal,
 		SearchErrorsTotal,
+		SearchRequestDuration,
 	)
 }
