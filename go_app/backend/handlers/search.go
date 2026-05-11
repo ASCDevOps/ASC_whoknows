@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"html/template"
+	"log"
 	"net/http"
 	"time"
 	"whoknows_backend/metrics"
@@ -60,7 +61,11 @@ func (h *SearchAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(SearchResponse{Data: data})
+
+	if err := json.NewEncoder(w).Encode(SearchResponse{Data: data}); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		return
+	}
 }
 
 func queryPages(db *sql.DB, query, path, method string) []SearchResult {
@@ -83,7 +88,12 @@ func queryPages(db *sql.DB, query, path, method string) []SearchResult {
 		metrics.SearchErrorsTotal.Inc()
 		return nil
 	}
-	defer rows.Close()
+
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Printf("failed to close rows: %v", err)
+		}
+	}()
 
 	var results []SearchResult
 	for rows.Next() {
@@ -98,6 +108,10 @@ func queryPages(db *sql.DB, query, path, method string) []SearchResult {
 			sr.Description = content
 		}
 		results = append(results, sr)
+	}
+	if err := rows.Err(); err != nil {
+		metrics.SearchErrorsTotal.Inc()
+		log.Printf("rows iteration error: %v", err)
 	}
 
 	if len(results) == 0 {
