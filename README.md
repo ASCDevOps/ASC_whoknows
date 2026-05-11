@@ -10,7 +10,9 @@ WhoKnows is a full-stack web search engine. Users can register, log in, and sear
 ---
 
 ## Project Structure (MonoRepo)
+
 We are using a MonoRepo project structure with 4 major folders
+
 1. /documentation
 2. /go_app
 3. /monitor
@@ -22,7 +24,7 @@ We are using a MonoRepo project structure with 4 major folders
 
 WhoKnows runs across two VMs:
 
-```
+``` Architecture
                         Internet
                            │
                     ┌──────▼──────┐
@@ -53,23 +55,27 @@ The app VM runs the application stack. The monitoring VM scrapes metrics from no
 
 ## Tech Stack
 
-**Application**
+### Application
+
 - [Go](https://golang.org/) — HTTP server, handlers, business logic
 - [PostgreSQL](https://www.postgresql.org/) — primary database (users, pages)
 - [nginx](https://nginx.org/) — reverse proxy, TLS termination via Let's Encrypt
 
-**Infrastructure**
+### Infrastructure
+
 - [Docker & Docker Compose](https://docs.docker.com/compose/) — containerisation
 - [GitHub Actions](https://github.com/features/actions) — CI/CD pipeline
 - [GitHub Container Registry](https://ghcr.io) — image hosting (`ghcr.io/ascdevops/asc_whoknows`)
 
-**Monitoring**
+### Monitoring
+
 - [Prometheus](https://prometheus.io/) — metrics collection and alerting rules
 - [Grafana](https://grafana.com/) — dashboards
 - [Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/) — alert routing
 - [Discord](https://discord.com/) — alert notifications via webhook
 
-**Testing**
+### Testing
+
 - [Playwright](https://playwright.dev/) — end-to-end tests
 
 ---
@@ -100,7 +106,7 @@ docker compose -f docker-compose.prod.yml up -d
 
 The app will be available at `http://localhost:8080` in development.
 
-### Monitoring
+### Monitor
 
 The monitoring stack runs on a separate VM.
 
@@ -166,7 +172,7 @@ After installation, hooks will automatically run on every `git commit`.
 | `ADMIN_EMAIL`       | Email for the seeded admin account       |
 | `ADMIN_PASSWORD`    | Password for the seeded admin account    |
 
-### Monitoring — `monitor/.env`
+### Monitor — `monitor/.env`
 
 | Variable          | Description                                      |
 |-------------------|--------------------------------------------------|
@@ -181,7 +187,7 @@ After installation, hooks will automatically run on every `git commit`.
 
 The pipeline is defined in `.github/workflows/` with the following trigger logic:
 
-```
+``` Pipeline
 PR opened/updated  →  CI (build & test only)
 
 Merge to master    →  CI → push to GHCR → deploy to app VM → smoke test
@@ -195,10 +201,10 @@ Each stage gates the next — a failed CI run will not produce an image, a faile
 
 Prometheus scrapes three targets on the app VM:
 
-| Job                | Target          | What it covers                    |
-|--------------------|-----------------|-----------------------------------|
-| `whoknows-backend` | `:8080/metrics` | App-level metrics                 |
-| `cadvisor`         | `:8081`         | Docker container metrics          |
+| Job                | Target          | What it covers                         |
+|--------------------|-----------------|-----------------------------------     |
+| `whoknows-backend` | `:8080/metrics` | App-level metrics                      |
+| `cadvisor`         | `:8081`         | Docker container metrics               |
 | `node-exporter`    | `:9100`         | Host metrics (CPU, RAM, disk, network) |
 
 **Alert rules** (defined in `monitor/alertmanager/alerts.yml`):
