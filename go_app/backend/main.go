@@ -38,7 +38,7 @@ func main() {
 	mux.Handle("/api/change-password", &handlers.ChangePasswordHandler{DB: db})
 
 	// GET / - Serve Root Page
-	mux.Handle("/", &handlers.RootHandler{})
+	mux.Handle("/", &handlers.SearchHandler{DB: db})
 
 	// GET /register - Serve Register Page
 	mux.Handle("/register", &handlers.RegisterHandler{})
