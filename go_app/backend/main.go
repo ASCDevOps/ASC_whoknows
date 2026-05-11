@@ -55,8 +55,10 @@ func main() {
 	// GET /api/weather - Weather
 	mux.Handle("/api/weather", &handlers.WeatherAPIHandler{})
 
-	// GET /api/search - Search
-	mux.Handle("/api/search", &apiSearchHandler{DB: db})
+	// GET /search - Serve Search Page
+	mux.Handle("/search", &handlers.SearchHandler{DB: db})
+	// GET /api/search - Search API
+	mux.Handle("/api/search", &handlers.SearchAPIHandler{DB: db})
 
 	// POST /api/register - Register
 	mux.Handle("/api/register", &handlers.RegisterHandler{DB: db})
