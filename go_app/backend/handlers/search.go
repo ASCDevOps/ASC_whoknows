@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"html/template"
 	"net/http"
+	"time"
+	"whoknows_backend/metrics"
 )
 
 var searchTemplate = template.Must(template.ParseFiles("templates/layout.html", "templates/search.html"))
 
-// HTML handler
 type SearchHandler struct {
 	DB *sql.DB
 }
@@ -30,13 +31,12 @@ func (h *SearchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data := SearchPageData{Query: query}
 
 	if query != "" {
-		data.SearchResults = queryPages(h.DB, query)
+		data.SearchResults = queryPages(h.DB, query, r.URL.Path, r.Method)
 	}
 
 	_ = searchTemplate.ExecuteTemplate(w, "layout", data)
 }
 
-// JSON API handler
 type SearchAPIHandler struct {
 	DB *sql.DB
 }
@@ -48,7 +48,7 @@ type SearchResponse struct {
 func (h *SearchAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query().Get("q")
 
-	results := queryPages(h.DB, query)
+	results := queryPages(h.DB, query, r.URL.Path, r.Method)
 
 	data := make([]map[string]any, len(results))
 	for i, r := range results {
@@ -63,8 +63,15 @@ func (h *SearchAPIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(SearchResponse{Data: data})
 }
 
-// Shared query logic
-func queryPages(db *sql.DB, query string) []SearchResult {
+func queryPages(db *sql.DB, query, path, method string) []SearchResult {
+	metrics.SearchRequestsTotal.Inc()
+	metrics.SearchQueriesTotal.WithLabelValues(query).Inc()
+
+	start := time.Now()
+	defer func() {
+		metrics.SearchRequestDuration.WithLabelValues(path, method).Observe(time.Since(start).Seconds())
+	}()
+
 	rows, err := db.Query(`
 		SELECT title, url, content
 		FROM pages
@@ -73,6 +80,7 @@ func queryPages(db *sql.DB, query string) []SearchResult {
 		LIMIT 20
 	`, "%"+query+"%")
 	if err != nil {
+		metrics.SearchErrorsTotal.Inc()
 		return nil
 	}
 	defer rows.Close()
@@ -91,5 +99,12 @@ func queryPages(db *sql.DB, query string) []SearchResult {
 		}
 		results = append(results, sr)
 	}
+
+	if len(results) == 0 {
+		metrics.SearchNoResultsTotal.Inc()
+	} else {
+		metrics.SearchResultsTotal.Add(float64(len(results)))
+	}
+
 	return results
 }
