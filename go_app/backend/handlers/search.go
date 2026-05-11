@@ -17,6 +17,8 @@ type SearchHandler struct {
 }
 
 type SearchPageData struct {
+	User          any
+	Flash         string
 	Query         string
 	SearchResults []SearchResult
 }
